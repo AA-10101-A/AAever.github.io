@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A♾️A</title>
+    <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+        font-family: a;
+        src: url(./Mj_Ghalam-1.TTF);
+    }
+    :root{
+      --bg-1: #051029;
+      --bg-2: #0b3256;
+      --accent: #D4AF37;
+      --muted: rgba(255,255,255,0.6);
+      --glass: rgba(255,255,255,0.04);
+    }
+
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:a;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(3,27,56,0.6), transparent),
+                  linear-gradient(180deg,var(--bg-1), var(--bg-2));
+      color:#fff;
+      overflow:hidden;
+    }
+
+    .wrap{
+      background:rgba(255,255,255,0.05);
+      backdrop-filter:blur(10px);
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(2,16,32,0.6);
+      padding:40px;
+      max-width:900px;
+      width:90%;
+      text-align:center;
+    }
+
+    .countdown{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:20px;
+    }
+
+    .unit{
+      background:rgba(255,255,255,0.07);
+      border:1px solid gold;
+      border-radius:20px;
+      padding:20px 10px;
+      color: aqua;
+      transition: all 0.3s ease;
+    }
+
+    .value{
+      font-size:42px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .label{
+      font-size:13px;
+      color:var(--muted);
+      letter-spacing:1px;
+    }
+
+    @keyframes pop{
+      0%{transform:scale(1)}
+      50%{transform:scale(1.15)}
+      100%{transform:scale(1)}
+    }
+    .pulse{animation:pop 0.6s ease}
+
+    /* 🔹 واکنش‌گرایی */
+    @media (max-width: 768px) {
+      .countdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .value {
+        font-size: 36px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .countdown {
+        grid-template-columns: 1fr;
+      }
+      .wrap {
+        padding: 25px;
+      }
+      .unit {
+        padding: 15px 5px;
+      }
+      .value {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="countdown">
+      <div class="unit"><div id="days" class="value">00</div><div class="label">روز</div></div>
+      <div class="unit"><div id="hours" class="value">00</div><div class="label">ساعت</div></div>
+      <div class="unit"><div id="minutes" class="value">00</div><div class="label">دقیقه</div></div>
+      <div class="unit"><div id="seconds" class="value">00</div><div class="label">ثانیه</div></div>
+    </div>
+  </div>
+
+  <script>
+    const targetDate = new Date('2025-10-26T00:00:00'); // ۴ آبان ۱۴۰۴ ساعت ۰۰:۰۰
+
+    const el = {
+      days: document.getElementById('days'),
+      hours: document.getElementById('hours'),
+      minutes: document.getElementById('minutes'),
+      seconds: document.getElementById('seconds')
+    };
+
+    function pad(n){return String(n).padStart(2,'0');}
+
+    function update(){
+      const now = new Date();
+      let diff = Math.max(0, targetDate - now);
+
+      const days = Math.floor(diff / (1000*60*60*24));
+      diff -= days*(1000*60*60*24);
+      const hours = Math.floor(diff / (1000*60*60));
+      diff -= hours*(1000*60*60);
+      const minutes = Math.floor(diff / (1000*60));
+      diff -= minutes*(1000*60);
+      const seconds = Math.floor(diff/1000);
+
+      setValue(el.days,pad(days));
+      setValue(el.hours,pad(hours));
+      setValue(el.minutes,pad(minutes));
+      setValue(el.seconds,pad(seconds));
+    }
+
+    function setValue(node,text){
+      if(node.textContent!==text){
+        node.textContent=text;
+        node.classList.remove('pulse');
+        void node.offsetWidth;
+        node.classList.add('pulse');
+      }
+    }
+
+    update();
+    setInterval(update,1000);
+  </script>
+</body>
+</html>
