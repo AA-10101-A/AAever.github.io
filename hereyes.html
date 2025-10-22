@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A♾️A</title>
+  <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+  <style>
+    @font-face {
+      font-family: a;
+      src: url(./Mj_Ghalam-1.TTF);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: gold;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      font-family: a, sans-serif;
+    }
+
+    .center-text {
+      position: absolute;
+      z-index: 10;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #0044ff;
+      text-shadow: 0 0 10px white, 0 0 20px white;
+      pointer-events: none;
+      padding: 0 1rem;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 2rem;
+      animation: fall 3s linear forwards;
+      user-select: none;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      0% {
+        top: -50px;
+        opacity: 1;
+        transform: translateX(0) rotate(0deg);
+      }
+      100% {
+        top: 100vh;
+        opacity: 0;
+        transform: translateX(30px) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="center-text">اندازه تمام این قلبا دوست دارم آیلینم 💙</div>
+
+  <script>
+    function createHeart() {
+      const heart = document.createElement('span');
+      heart.textContent = '💙';
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+      heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }
+
+    setInterval(createHeart, 150);
+  </script>
+</body>
+</html>
