@@ -1,107 +1,203 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>4*(A♾️A)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A♾️A</title>
   <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
   <style>
     @font-face {
         font-family: a;
         src: url(./Mj_Ghalam-1.TTF);
     }
+    @font-face {
+        font-family: b;
+        src: url(./Fedra\ Arabic\ Display\ AR\ LT\ Black.ttf);
+    }
+
     body {
-      background:#0d1117;
-      color:white;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      font-family:a;
+      font-family: a, b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #1a1a2e;
+      color: #ffffff;
+      overflow: hidden;
+      text-align: center;
     }
 
-    .container {
-      display:flex;
-      gap:20px;
+    #translations {
+      position: relative;
+      width: 80%;
+      max-width: 800px;
     }
 
-    .square {
-      width:120px;
-      height:120px;
-      border:3px solid #58a6ff;
-      border-radius:20px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:48px;
-      font-weight:700;
-      box-shadow:0 0 20px rgba(88,166,255,0.4);
-      transition: all 0.3s ease;
+    #persian-text {
+      font-size: 6vw; 
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffffff;
+      font-family: a;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6); 
     }
 
-    .label {
-      margin-top:10px;
-      text-align:center;
-      font-size:18px;
-      color:#aaa;
+    .translation {
+      opacity: 0;
+      font-size: 4vw; 
+      font-weight: 500;
+      margin: 10px 0;
+      color: darkorange;
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      display: block;
+      transform: scale(1);
     }
 
-    .progress {
-      margin-top:20px;
-      color:#58a6ff;
-      font-size:16px;
-      direction: rtl;
+    .translation.show {
+      opacity: 1;
+      transform: scale(1.05); 
     }
+    @media (max-width: 600px) {
+      #persian-text {
+        font-size: 6vw; 
+      }
+
+      .translation {
+        font-size: 4vw;
+      }
+    }
+
   </style>
 </head>
 <body>
-  <div class="container">
-    <div>
-      <div id="dayBox" class="square">0</div>
-      <div class="label">روز</div>
-    </div>
-    <div>
-      <div id="monthBox" class="square">0</div>
-      <div class="label">ماه</div>
-    </div>
-  </div>
-  <div class="progress" id="progress">خیلی خوشبختم که تورو دارم دخترم:)</div>
+
+<div id="translations">
+  <div id="persian-text">آیلینم دوست دارم زیااد</div>
+  <div class="translation" id="translation"></div>
+</div>
 
 <script>
-  const dayBox = document.getElementById("dayBox");
-  const monthBox = document.getElementById("monthBox");
-  const progress = document.getElementById("progress");
-  const monthDays = [31, 31, 30, 30];
-  const totalDays = monthDays.reduce((a,b)=>a+b,0);
-  const totalDuration = 15 * 1000; 
-  const stepTime = totalDuration / totalDays;
+const translations = [
+  "I love you so much, Aylin",
+  "أحبك كثيرا، آيلين",
+  "Je t'aime tellement, Aylin",
+  "Te quiero mucho, Aylin",
+  "Ich liebe dich so sehr, Aylin",
+  "Ti amo così tanto, Aylin",
+  "Eu te amo tanto, Aylin",
+  "Ik hou zoveel van je, Aylin",
+  "Я тебя так люблю, Айлин",
+  "我非常爱你，艾琳",
+  "アイリン、大好きだよ",
+  "아이린아, 사랑해",
+  "आयलिन, मैं तुमसे बहुत प्यार करता हूँ",
+  "আয়লিন, আমি তোমাকে অনেক ভালোবাসি",
+  "آیلین، میں تم سے بہت محبت کرتا ہوں",
+  "Seni çok seviyorum, Aylin",
+  "Σ' αγαπώ πολύ, Αϊλίν",
+  "Kocham cię bardzo, Aylin",
+  "Miluji tě tolik, Aylin",
+  "Jag älskar dig så mycket, Aylin",
+  "Rakastan sinua niin paljon, Aylin",
+  "Jeg elsker dig så meget, Aylin",
+  "Jeg elsker deg så mye, Aylin",
+  "Nagyon szeretlek, Aylin",
+  "Te iubesc atât de mult, Aylin",
+  "بحبك جدا يا آيلين",
+  "אני אוהב אותך כל כך, איילין",
+  "ฉันรักคุณมาก, ไอรีน",
+  "Anh yêu em rất nhiều, Aylin",
+  "Aku sangat mencintaimu, Aylin",
+  "Saya sangat sayang padamu, Aylin",
+  "Mahal na mahal kita, Aylin",
+  "Nakupenda sana, Aylin",
+  "Ngiyakuthanda kakhulu, Aylin",
+  "Ek is lief vir jou, Aylin",
+  "Volim te puno, Aylin",
+  "Volim te jako, Aylin",
+  "Volim te puno, Aylin",
+  "Të dua shumë, Aylin",
+  "Те сакам многу, Ајлин",
+  "Обичам те толкова много, Айлън",
+  "Я тебе так люблю, Айлін",
+  "Мен сені өте жақсы көремін, Айлин",
+  "ძალიან მიყვარხარ, აილინი",
+  "Ես շատ սիրում եմ քեզ, Այլին",
+  "اینجا میگم عاشقتممم",
+  "زه تا سره ډېره مينه لرم، آيلين",
+  "आयलिन, म तिमीलाई धेरै माया गर्छु",
+  "ஐலினே, நான் உன்னை மிகவும் காதலிக்கின்றேன்",
+  "ఐలిన్, నేను నిన్ను చాలా ప్రేమిస్తున్నాను",
+  "ಐಲಿನ್, ನಾನು ನಿನ್ನನ್ನು ತುಂಬಾ ಪ್ರೀತಿಸುತ್ತೇನೆ",
+  "ഐലിന്, ഞാന് നിന്നെ വളരെ സ്നേഹിക്കുന്നു",
+  "आयलिन, मी तुला खूप प्रेम करतो",
+  "අයිලින්, මට ඔබට ගොඩක් ආදරෙයි",
+  "આઇલિન, હું તને ઘણો પ્રેમ કરું છું",
+  "ਆਇਲਿਨ, ਮੈਂ ਤੈਨੂੰ ਬਹੁਤ ਪਿਆਰ ਕਰਦਾ ਹਾਂ",
+  "Ez hej te dikim gelek, Aylin",
+  "Waan ku jeclahay aad u badan, Aylin",
+  "M renmen ou anpil, Aylin",
+  "Mo nifẹ rẹ pupọ, Aylin",
+  "A hụrụ m gị n’anya nke ukwuu, Aylin",
+  "Ndiyakuthanda kakhulu, Aylin",
+  "Kuyayki, Aylin",
+  "Aroha ahau ki a koe, Aylin",
+  "Ofa atu, Aylin",
+  "Uo te alofa ia te oe, Aylin",
+  "Kuv hlub koj heev, Aylin",
+  "Aku tresna sampeyan banget, Aylin",
+  "ဧလင်း, ငါသည် အရမ်းချစ်တယ်",
+  "ខ្ញុំស្រឡាញ់អ្នកយ៉ាងខ្លាំង អាយលិន",
+  "ຂ້ອຍຮັກທ່ານຫຼາຍ, ອາຍລິນ",
+  "Би чамд маш их хайртай, Айлин",
+  "आयलिन, म तिमीलाई धेरै माया गर्छु",
+  "ኣይሊን፣ እትምን ዝበለ ፍቕሪ እተይፍረ",
+  "አይሊን፣ በጣም እፍቅሪ አለኝ",
+  "A hụrụ m gị n’anya nke ukwuu, Aylin",
+  "Ngiyakuthanda kakhulu, Aylin",
+  "Kea u rata haholo, Aylin",
+  "Ndiyakuthanda kakhulu, Aylin",
+  "Ndimakukonda kwambiri, Aylin",
+  "Tiako ianao be, Aylin",
+  "Au domoni iko vakalevu, Aylin",
+  "M renmen ou anpil, Aylin",
+  "Mèkpɔ mɔmɔ, Aylin",
+  "Nopp naa la, Aylin",
+  "Medɔ wo paa, Aylin",
+  "N be da sigi, Aylin",
+  "Kuyayki, Aylin",
+  "M renmen ou anpil, Aylin",
+  "Men seni juda sevaman, Aylin",
+  "আমি তোমাকে অনেক ভালোবাসি, আয়লিন",
+  "Inhobbok ħafna, Aylin",
+  "Ľúbim ťa veľmi, Aylin",
+  "Es tevi ļoti mīlu, Aylin",
+  "Ma armastan sind väga, Aylin",
+  "Aš tave labai myliu, Aylin",
+  "Ég elska þig svo mikið, Aylin",
+  "Rakastan sinua niin paljon, Aylin",
+  "Мен сені қатты жақсы көремін, Айлин",
+  "Mahal na mahal kita, Aylin"
+];
+const translationElement = document.getElementById('translation');
+let currentTranslationIndex = 0;
 
-  let day = 0;
-  let month = 0;
+function showNextTranslation() {
+  translationElement.classList.remove('show');
+  setTimeout(() => {
+    currentTranslationIndex++;
+    if (currentTranslationIndex >= translations.length) currentTranslationIndex = 0;
+    translationElement.innerText = translations[currentTranslationIndex];
+    translationElement.classList.add('show');
+  }, 500);
+}
 
-  function updateDisplay() {
-    dayBox.textContent = day;
-    monthBox.textContent = month;
-  }
+translationElement.innerText = translations[0];
+translationElement.classList.add('show');
 
-  function nextStep() {
-    day++;
-    const currentMonthLength = monthDays[month] || 31;
-
-    if (day > currentMonthLength) {
-      day = 0;
-      month++;
-    }
-
-    updateDisplay();
-    if (month === 4 && day === 0) {
-      clearInterval(timer);
-      progress.textContent = "برو بریم برای سالگرد ۱۴۱۲۳۴۹۸ مون بانوی نازم:))";
-    }
-  }
-
-  updateDisplay();
-  const timer = setInterval(nextStep, stepTime);
+setInterval(showNextTranslation, 1000);
 </script>
+
 </body>
 </html>
