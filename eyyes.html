@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title></title>
+  <title>Eyes Follow the Text</title>
   <style>
     @font-face {
       font-family: a;
       src: url(./Fedra\ Arabic\ Display\ AR\ LT\ Black.ttf);
     }
+
     * {
       margin: 0;
       padding: 0;
@@ -22,7 +23,7 @@
       align-items: center;
       background: lightblue;
       overflow: hidden;
-      cursor: none;
+      touch-action: none;
     }
 
     .eyes {
@@ -55,28 +56,19 @@
 
     #custom-cursor {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 50%;
+      left: 50%;
       color: #E79A3F;
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: bold;
       font-family: a;
       pointer-events: none;
       mix-blend-mode: difference;
-      transition: transform 0.1s ease-out;
+      transform: translate(-50%, -50%);
+      cursor: grab;
+      user-select: none;
     }
 
-    /* Hide custom cursor on mobile */
-    @media (hover: none) and (pointer: coarse) {
-      body {
-        cursor: auto;
-      }
-      #custom-cursor {
-        display: none;
-      }
-    }
-
-    /* Make eyes smaller on mobile */
     @media (max-width: 600px) {
       .eyes {
         gap: 1.2rem;
@@ -91,6 +83,9 @@
         height: 25px;
         border: 6px solid #E79A3F;
       }
+      #custom-cursor {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
@@ -104,11 +99,40 @@
 
   <script>
     const eyes = document.querySelectorAll(".eye");
-    const cursor = document.getElementById("custom-cursor");
+    const text = document.getElementById("custom-cursor");
 
+    let offsetX = 0, offsetY = 0;
+    let dragging = false;
+
+    // For both mouse and touch drag
+    function startDrag(e) {
+      dragging = true;
+      text.style.cursor = "grabbing";
+      const rect = text.getBoundingClientRect();
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+      offsetX = clientX - rect.left - rect.width / 2;
+      offsetY = clientY - rect.top - rect.height / 2;
+    }
+
+    function stopDrag() {
+      dragging = false;
+      text.style.cursor = "grab";
+    }
+
+    function moveDrag(e) {
+      if (!dragging) return;
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+      const x = clientX - offsetX;
+      const y = clientY - offsetY;
+      text.style.left = x + "px";
+      text.style.top = y + "px";
+      updateEyes(x, y);
+    }
+
+    // Update eyes based on target position
     function updateEyes(x, y) {
-      if (cursor) cursor.style.transform = `translate(${x}px, ${y}px)`;
-
       eyes.forEach((eye) => {
         const rect = eye.getBoundingClientRect();
         const eyeCenterX = rect.left + rect.width / 2;
@@ -120,30 +144,23 @@
         const pupil = eye.querySelector(".pupil");
         const pupilX = Math.cos(angle) * distance;
         const pupilY = Math.sin(angle) * distance;
-
         pupil.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
       });
     }
 
-    // Mouse support
-    document.addEventListener("mousemove", (e) => {
-      updateEyes(e.clientX, e.clientY);
-    });
+    // Event listeners
+    text.addEventListener("mousedown", startDrag);
+    text.addEventListener("touchstart", startDrag);
 
-    // Touch support
-    document.addEventListener("touchmove", (e) => {
-      const touch = e.touches[0];
-      updateEyes(touch.clientX, touch.clientY);
-    });
+    document.addEventListener("mouseup", stopDrag);
+    document.addEventListener("touchend", stopDrag);
 
-    // Optional: Gyroscope (tilt tracking)
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", (e) => {
-        const x = (window.innerWidth / 2) + e.gamma * 10;
-        const y = (window.innerHeight / 2) + e.beta * 10;
-        updateEyes(x, y);
-      });
-    }
+    document.addEventListener("mousemove", moveDrag);
+    document.addEventListener("touchmove", moveDrag);
+
+    // Initialize: eyes look at text center
+    const rect = text.getBoundingClientRect();
+    updateEyes(rect.left + rect.width / 2, rect.top + rect.height / 2);
   </script>
 </body>
 </html>
