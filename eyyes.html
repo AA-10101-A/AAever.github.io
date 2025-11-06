@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <style>
+    @font-face {
+        font-family: a;
+        src: url(./Fedra\ Arabic\ Display\ AR\ LT\ Black.ttf);
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: lightblue;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    .eyes {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .eye {
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 3px solid #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pupil {
+      width: 40px;
+      height: 40px;
+      background: #000;
+      border: 8px solid #E79A3F;
+      border-radius: 50%;
+      position: absolute;
+      transition: transform 0.05s linear;
+    }
+
+    #custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      color: #E79A3F;
+      font-size: 1rem;
+      font-weight: bold;
+      font-family: a;
+      pointer-events: none;
+      mix-blend-mode: difference;
+      transition: transform 0.1s ease-out;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      body {
+        cursor: auto; /* show normal finger cursor on mobile */
+      }
+      #custom-cursor {
+        display: none; /* hide custom cursor text */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="eyes">
+    <div class="eye"><div class="pupil"></div></div>
+    <div class="eye"><div class="pupil"></div></div>
+  </div>
+
+  <div id="custom-cursor">قشنگی های تو</div>
+
+  <script>
+    const eyes = document.querySelectorAll(".eye");
+    const cursor = document.getElementById("custom-cursor");
+
+    function updateEyes(x, y) {
+      if (cursor) cursor.style.transform = `translate(${x}px, ${y}px)`;
+
+      eyes.forEach((eye) => {
+        const rect = eye.getBoundingClientRect();
+        const eyeCenterX = rect.left + rect.width / 2;
+        const eyeCenterY = rect.top + rect.height / 2;
+
+        const angle = Math.atan2(y - eyeCenterY, x - eyeCenterX);
+        const distance = Math.min(15, Math.hypot(x - eyeCenterX, y - eyeCenterY) / 15);
+
+        const pupil = eye.querySelector(".pupil");
+        const pupilX = Math.cos(angle) * distance;
+        const pupilY = Math.sin(angle) * distance;
+
+        pupil.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+      });
+    }
+
+    // Mouse support
+    document.addEventListener("mousemove", (e) => {
+      updateEyes(e.clientX, e.clientY);
+    });
+
+    // Touch support
+    document.addEventListener("touchmove", (e) => {
+      const touch = e.touches[0];
+      updateEyes(touch.clientX, touch.clientY);
+    });
+
+    // Optional: Gyroscope (tilt tracking)
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", (e) => {
+        const x = (window.innerWidth / 2) + e.gamma * 10;
+        const y = (window.innerHeight / 2) + e.beta * 10;
+        updateEyes(x, y);
+      });
+    }
+  </script>
+</body>
+</html>
