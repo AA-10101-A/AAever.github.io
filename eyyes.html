@@ -6,8 +6,8 @@
   <title></title>
   <style>
     @font-face {
-        font-family: a;
-        src: url(./Fedra\ Arabic\ Display\ AR\ LT\ Black.ttf);
+      font-family: a;
+      src: url(./Fedra\ Arabic\ Display\ AR\ LT\ Black.ttf);
     }
     * {
       margin: 0;
@@ -66,12 +66,30 @@
       transition: transform 0.1s ease-out;
     }
 
+    /* Hide custom cursor on mobile */
     @media (hover: none) and (pointer: coarse) {
       body {
-        cursor: auto; /* show normal finger cursor on mobile */
+        cursor: auto;
       }
       #custom-cursor {
-        display: none; /* hide custom cursor text */
+        display: none;
+      }
+    }
+
+    /* Make eyes smaller on mobile */
+    @media (max-width: 600px) {
+      .eyes {
+        gap: 1.2rem;
+      }
+      .eye {
+        width: 65px;
+        height: 65px;
+        border: 2px solid #fff;
+      }
+      .pupil {
+        width: 25px;
+        height: 25px;
+        border: 6px solid #E79A3F;
       }
     }
   </style>
