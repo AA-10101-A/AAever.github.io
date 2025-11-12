@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fa">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A♾️A</title>
+  <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+  <style>
+    @font-face {
+        font-family: a;
+        src: url(./Mj_Ghalam-1.TTF);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family: a;}
+    html,body{height:100%}
+    body{
+      background:#0b1220;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .stage{
+      position:relative;
+      width:100%;
+      height:100vh;
+      border-radius:12px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(5,10,20,.85), rgba(10,15,30,.65));
+      box-shadow:0 10px 40px rgba(2,6,23,.6);
+    }
+
+    .scene{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:20px;
+      z-index:5;
+      text-align:center;
+    }
+
+    .scene img{
+      width:250px;
+      height:auto;
+      border-radius:50px;
+      box-shadow:0 6px 30px rgba(0,0,0,.5);
+      z-index:6;
+    }
+
+    .center-text{
+      color:#fff;
+      font-size:clamp(22px,3.6vw,44px);
+      font-weight:700;
+      text-shadow:0 6px 30px rgba(0,0,0,.6);
+      z-index:1;
+      line-height:1.5;
+    }
+
+    .clickable-word {
+      color:#66b3ff;
+      cursor:pointer;
+      text-shadow:0 0 15px rgba(102,179,255,0.8);
+      transition:all .2s ease;
+    }
+    .clickable-word:active {
+      transform:scale(1.2);
+      text-shadow:0 0 25px rgba(102,179,255,1);
+    }
+
+    .emoji-layer{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:3;
+      overflow:hidden;
+    }
+
+    .emoji{
+      position:absolute;
+      will-change:transform, opacity;
+      user-select:none;
+      font-size:28px;
+      transform-origin:center;
+      animation:fall linear forwards;
+    }
+
+    @keyframes fall{
+      0%{transform:translateY(-10vh) rotate(0deg);opacity:0}
+      8%{opacity:1}
+      85%{transform:translateY(95vh) rotate(380deg)}
+      100%{transform:translateY(120vh) rotate(720deg);opacity:0}
+    }
+  </style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="scene">
+      <img src="./IMG_1716.jpg" alt="Center image" />
+      <div class="center-text" id="centerText">
+        💙 آسمون به ماهش می‌نازه،من به داشتن 
+        <span class="clickable-word" id="youWord">تو</span>
+      </div>
+    </div>
+
+    <div class="emoji-layer" id="emojiLayer"></div>
+  </div>
+
+  <audio id="clickSound" src="./New Project.mp3" preload="auto"></audio>
+
+  <script>
+    const EMOJIS = ['✨','🌙','💖','⭐','💙'];
+    const EMOJI_COUNT_PER_BURST = 20;
+    const AUTO_RAIN_INTERVAL = 500;
+
+    const stage = document.getElementById('stage');
+    const layer = document.getElementById('emojiLayer');
+    const youWord = document.getElementById('youWord');
+    const sound = document.getElementById('clickSound');
+
+    const rnd = (min, max) => Math.random() * (max - min) + min;
+
+    function createEmoji(xFrac){
+      const el = document.createElement('div');
+      el.className = 'emoji';
+      el.textContent = EMOJIS[Math.floor(rnd(0, EMOJIS.length))];
+      const size = Math.round(rnd(18, 56));
+      el.style.fontSize = size + 'px';
+      const left = Math.round(rnd(0, stage.clientWidth));
+      if(typeof xFrac === 'number'){
+        const cx = Math.round(xFrac * stage.clientWidth);
+        el.style.left = (cx + rnd(-80,80)) + 'px';
+      } else el.style.left = left + 'px';
+      const delay = rnd(0, 1.6);
+      const duration = rnd(3.6, 7.2) + (56 - size)/30;
+      el.style.top = '-' + rnd(20,120) + 'px';
+      el.style.opacity = '0';
+      el.style.animationDuration = duration + 's';
+      el.style.animationDelay = delay + 's';
+      el.style.transform = `translateY(-10vh) rotate(${rnd(-30,30)}deg)`;
+      el.addEventListener('animationend', () => el.remove());
+      layer.appendChild(el);
+    }
+
+    function spawnBurst(clientX){
+      const rect = stage.getBoundingClientRect();
+      const xFrac = (clientX - rect.left)/rect.width;
+      for(let i=0;i<EMOJI_COUNT_PER_BURST;i++) createEmoji(xFrac);
+    }
+
+    stage.addEventListener('click', e => spawnBurst(e.clientX));
+
+    let autoRain = true;
+    let autoTimer = null;
+    function startAutoRain(){
+      if(autoTimer) return;
+      autoTimer = setInterval(()=>{
+        const x = rnd(0, stage.clientWidth);
+        spawnBurst(x);
+      }, AUTO_RAIN_INTERVAL);
+    }
+    function stopAutoRain(){ clearInterval(autoTimer); autoTimer = null; }
+
+    document.addEventListener('keydown', e=>{
+      if(e.code==='Space'){
+        e.preventDefault();
+        autoRain=!autoRain;
+        autoRain?startAutoRain():stopAutoRain();
+      }
+    });
+
+    youWord.addEventListener('click', () => {
+      sound.currentTime = 0;
+      sound.play();
+    });
+
+    startAutoRain();
+  </script>
+</body>
+</html>
