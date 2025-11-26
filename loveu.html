@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A♾️A</title>
+<link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+
+<style>
+@font-face {
+    font-family: a;
+    src: url(./Mj_Ghalam-1.TTF);
+}
+
+body {
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  font-family: a;
+  direction: rtl;
+  background:#0a1930;
+}
+
+.star{
+  position:absolute;
+  background:white;
+  border-radius:50%;
+  opacity:0.8;
+  pointer-events:none;
+  box-shadow:0 0 4px rgba(255,255,255,0.7);
+  animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+  from {opacity:0.3;}
+  to {opacity:1;}
+}
+
+.word{
+  position:absolute;
+  color:#ffe5c0;
+  font-size:30px;
+  font-weight:bold;
+  white-space:nowrap;
+  user-select:none;
+  text-shadow:0 2px 5px rgba(0,0,0,0.5);
+}
+
+@media (max-width:600px){
+  .word{
+    font-size:18px;
+  }
+}
+</style>
+</head>
+<body>
+
+<script>
+(function(){
+  const text = "دوست دارم همه کسم:)";
+  const starCount = 150;
+  for(let i=0;i<starCount;i++){
+    const star = document.createElement("div");
+    star.className = "star";
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+    star.style.left = Math.random() * window.innerWidth + "px";
+    star.style.top = Math.random() * window.innerHeight + "px";
+    star.style.animationDuration = (Math.random()*2+1) + "s";
+    document.body.appendChild(star);
+  }
+
+  function spawnOne(){
+    const el = document.createElement("div");
+    el.className = "word";
+    el.textContent = text;
+    const x = Math.random() * (window.innerWidth - 150);
+    const y = Math.random() * (window.innerHeight - 50);
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    document.body.appendChild(el);
+  }
+
+  setInterval(spawnOne, 150);
+})();
+</script>
+
+</body>
+</html>
