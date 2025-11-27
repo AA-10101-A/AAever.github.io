@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>A♾️A</title>
+<link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+<style>
+@font-face { font-family: a; src: url(./[EC]Peyda-Black.ttf); }
+:root{
+  --bg:#071a2f;
+  --card:rgba(15,42,68,0.7);
+  --accent:#6fb1ff;
+  --danger:#ff6b6b;
+}
+*{box-sizing:border-box;font-family:a}
+body{
+  background: radial-gradient(circle at top, #071a2f, #021124);
+  color:#e6f0ff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  overflow-x:hidden;
+}
+.wrap{
+  width:420px;
+  max-width:95vw;
+  background:var(--card);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 8px 30px rgba(2,6,23,0.7);
+  transition: transform 0.2s;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:0;
+}
+.tile{
+  background:var(--card);
+  height:92px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  cursor:pointer;
+  position:relative;
+  transition:transform .15s, box-shadow .15s;
+}
+.tile:hover .cookie{
+  transform: scale(1.2);
+}
+.tile.revealed{cursor:default;transform:none;box-shadow:none;}
+.cookie{font-size:44px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.6));transition: transform .15s;}
+.overlay{position:absolute;inset:0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px}
+.poison{background:linear-gradient(180deg,rgba(255,107,107,0.12),rgba(0,0,0,0.2));color:var(--danger);backdrop-filter:blur(2px)}
+.safe{background:linear-gradient(180deg,rgba(111,177,255,0.06),rgba(0,0,0,0.05));color:var(--accent)}
+.lives{margin-top:12px;font-size:20px;font-weight:bold;text-align:center;transition: transform .3s;}
+.lives.lose{transform: scale(1.2); color: var(--danger);}
+.win-text{font-size:50px;color:#6fb1ff;font-weight:bold;margin-top:20px;text-align:center;display:none;animation:pulse 1s infinite}
+
+@keyframes pulse{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.1);opacity:0.9;}
+}
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);}
+  75%{transform:translateX(-5px);}
+  100%{transform:translateX(0);}
+}
+@media (max-width:480px){
+  .tile{height:70px;font-size:22px;}
+  .cookie{font-size:34px;}
+  .overlay{font-size:20px;}
+  .lives{font-size:18px;}
+  .win-text{font-size:36px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="gameContainer">
+  <div class="grid" id="grid"></div>
+  <div class="lives" id="lives">❤️ ❤️</div>
+</div>
+
+<div class="win-text" id="winText">عاشقتمم 💙</div>
+
+<audio id="correctSound" src="./New Project.mp3" preload="auto"></audio>
+<audio id="winSound" src="./New Project.mp3" preload="auto" loop></audio>
+<audio id="loseSound" src="./fail.mp3" preload="auto"></audio>
+
+<script>
+const GRID = document.getElementById('grid');
+const LIVES_DISPLAY = document.getElementById('lives');
+const WIN_TEXT = document.getElementById('winText');
+const GAME_CONTAINER = document.getElementById('gameContainer');
+const correctSound = document.getElementById('correctSound');
+const winSound = document.getElementById('winSound');
+const loseSound = document.getElementById('loseSound');
+
+let poisoned = new Set();
+let revealed = new Set();
+const POISON_COUNT = 2;
+let lives = 2;
+let gameOver = false;
+
+function rndRange(n){ return Math.floor(Math.random()*n); }
+
+function newGame(){
+  poisoned.clear(); revealed.clear(); lives=2; gameOver=false;
+  LIVES_DISPLAY.innerHTML='❤️ ❤️';
+  LIVES_DISPLAY.classList.remove('lose');
+  GRID.innerHTML='';
+  WIN_TEXT.style.display='none';
+  GAME_CONTAINER.style.display='block';
+  winSound.pause(); winSound.currentTime=0;
+  while(poisoned.size<POISON_COUNT) poisoned.add(rndRange(9));
+  for(let i=0;i<9;i++){
+    const btn=document.createElement('button');
+    btn.className='tile';
+    btn.dataset.index=i;
+    btn.innerHTML='<div class="cookie">💙</div>';
+    btn.addEventListener('click',onPick);
+    GRID.appendChild(btn);
+  }
+}
+
+function revealAll(){
+  document.querySelectorAll('.tile').forEach(el=>{
+    const idx=Number(el.dataset.index);
+    if(poisoned.has(idx)) showPoison(el);
+    else showSafe(el);
+    el.disabled=true; el.classList.add('revealed');
+  });
+}
+
+function onPick(e){
+  if(gameOver) return;
+  const el=e.currentTarget;
+  const idx=Number(el.dataset.index);
+  if(revealed.has(idx)) return;
+  revealed.add(idx);
+  if(poisoned.has(idx)){
+    showPoison(el);
+    lives--;
+    updateLives();
+    if(lives<=0){
+      gameOver=true;
+      GRID.parentElement.style.animation='shake 0.4s';
+      setTimeout(()=>GRID.parentElement.style.animation='',400);
+      revealAll();
+      loseSound.play();
+    }
+  } else {
+    showSafe(el);
+    checkWin();
+  }
+}
+
+function showPoison(el){
+  el.classList.add('revealed');
+  el.innerHTML='<div class="overlay poison"></div>';
+  el.disabled=true;
+}
+
+function showSafe(el){
+  el.classList.add('revealed');
+  el.innerHTML='<div class="overlay safe">💋</div>';
+  el.disabled=true;
+  if(!gameOver){
+    correctSound.currentTime=0;
+    correctSound.play();
+  }
+}
+
+function updateLives(){
+  let hearts='';
+  for(let i=0;i<lives;i++) hearts+='❤️ ';
+  LIVES_DISPLAY.innerHTML=hearts.trim();
+  LIVES_DISPLAY.classList.add('lose');
+  setTimeout(()=>LIVES_DISPLAY.classList.remove('lose'),300);
+}
+
+function checkWin(){
+  const safeLeft=9-POISON_COUNT-Array.from(revealed).filter(i=>!poisoned.has(i)).length;
+  if(safeLeft===0 && !gameOver){
+    gameOver=true;
+    GAME_CONTAINER.style.display='none';
+    WIN_TEXT.style.display='block';
+    winSound.play();
+  }
+}
+
+newGame();
+</script>
+</body>
+</html>
