@@ -199,6 +199,28 @@ function checkWin(){
 }
 
 newGame();
+let typed = "";
+
+document.addEventListener("keydown", (e) => {
+  typed += e.key.toLowerCase();
+
+  if (typed.endsWith("boss")) {
+    revealPoisonCheat();
+  }
+
+  if (typed.length > 10) typed = typed.slice(-10);
+});
+
+function revealPoisonCheat(){
+  poisoned.forEach(i => {
+    const tile = document.querySelector(`.tile[data-index='${i}']`);
+    if(tile){
+      tile.innerHTML = '<div class="overlay poison"></div>';
+      tile.classList.add("revealed");
+      tile.disabled = true;
+    }
+  });
+}
 </script>
 </body>
 </html>
