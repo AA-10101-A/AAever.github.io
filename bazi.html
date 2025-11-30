@@ -6,13 +6,8 @@
 <title>A♾️A</title>
 <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
 <style>
-  @font-face {
-    font-family: a;
-    src: url(./Mj_Ghalam-1.TTF);
-  }
-  *{
-    font-family: a;
-  }
+  @font-face { font-family: a; src: url(./Mj_Ghalam-1.TTF); }
+  *{ font-family: a; }
 html, body { height: 100%; margin:0; padding:0; }
 body {
   background-image: url("./Ghibli\ Style\ 4K\ Background.jpeg");
@@ -54,7 +49,6 @@ body {
   text-align:center;
   pointer-events:auto;
 }
-
 .dialog-content p {
   color: black;
   text-shadow:
@@ -95,9 +89,12 @@ const dialog = document.getElementById("dialog");
 const textBox = document.querySelector(".dialog-content p");
 let hideTimeout;
 let currentIndex = 0;
+const sound = new Audio("./New Project.mp3");
 
 document.querySelector(".character").onclick = () => {
   dialog.style.display = "flex";
+  sound.currentTime = 0;
+  sound.play();
   if(currentIndex === 0){
     textBox.textContent = messages[0];
     currentIndex = 1;
