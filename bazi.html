@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A♾️A</title>
+<link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+<style>
+  @font-face {
+    font-family: a;
+    src: url(./Mj_Ghalam-1.TTF);
+  }
+  *{
+    font-family: a;
+  }
+html, body { height: 100%; margin:0; padding:0; }
+body {
+  background-image: url("./Ghibli\ Style\ 4K\ Background.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.character {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(160vw, 650px);
+  animation: float 3s ease-in-out infinite;
+  cursor: pointer;
+}
+@keyframes float {
+  0%,100%{ transform: translateX(-50%) translateY(0);}
+  50%{ transform: translateX(-50%) translateY(10px);}
+}
+#dialog {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  pointer-events:none;
+}
+.dialog-content {
+  border-radius:20px;
+  direction: rtl;
+  font-size:40px;
+  color: black;
+  margin-bottom:250px;
+  text-align:center;
+  pointer-events:auto;
+}
+
+.dialog-content p {
+  color: black;
+  text-shadow:
+    2px 2px 4px white,
+    -2px -2px 4px white,
+    2px -2px 4px white,
+    -2px 2px 4px white;
+  font-weight: bold;
+  font-size: 45px;
+}
+</style>
+</head>
+<body>
+
+<img src="./Ghibli Style Character with Sunglasses.png" class="character">
+
+<div id="dialog">
+  <div class="dialog-content">
+    <p></p>
+  </div>
+</div>
+
+<script>
+let messages = [
+  "سلام آیلین خوشگلم",
+  "خیلی عاشتقم بچه",
+  "دوستت دارممم🩵",
+  "تو خیلی خوشگلی نانازی",
+  "تو خیلی مهربونی",
+  "تو خیلی قند عسلی",
+  "تو خیلی تو دل برویی:)",
+  "تو خیلی آروم جونمی",
+  "تو عمر این آدمی",
+  "تو نقطه امن منــی💕"
+];
+
+const dialog = document.getElementById("dialog");
+const textBox = document.querySelector(".dialog-content p");
+let hideTimeout;
+let currentIndex = 0;
+
+document.querySelector(".character").onclick = () => {
+  dialog.style.display = "flex";
+  if(currentIndex === 0){
+    textBox.textContent = messages[0];
+    currentIndex = 1;
+  } else {
+    textBox.textContent = messages[currentIndex];
+    currentIndex++;
+    if(currentIndex >= messages.length){
+      currentIndex = 1;
+    }
+  }
+  if(hideTimeout) clearTimeout(hideTimeout);
+  hideTimeout = setTimeout(()=>{
+    dialog.style.display = "none";
+  }, 3000);
+};
+
+dialog.onclick = (event)=>{
+  if(event.target.id === "dialog"){
+    dialog.style.display = "none";
+    if(hideTimeout) clearTimeout(hideTimeout);
+  }
+};
+</script>
+
+</body>
+</html>
