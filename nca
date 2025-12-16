@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>A♾️A</title>
+<link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+    <link href="https://fonts.googleapis.com/css?family=Lovers+Quarrel" rel="stylesheet">
+    <style>
+        :root {
+            --all-animations-duration: 1.5s;
+            --bgColor: red;
+            --color: black;
+            --defaultAnimationState: running;
+        }
+        
+        @font-face {
+            font-family: a;
+            src: url(./Mj_Ghalam-1.TTF);
+        }
+        
+        body {
+            animation: ChangeBGcolor var(--all-animations-duration) infinite alternate-reverse;
+            overflow: hidden;
+            animation-play-state: var(--defaultAnimationState);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .main-quote {
+            font-family: a;
+            text-align: center;
+            direction: rtl;
+            animation: h1Change var(--all-animations-duration) infinite alternate-reverse;
+            animation-play-state: var(--defaultAnimationState);
+            font-size: 3.5rem;
+            margin-bottom: 60px;
+        }
+        
+        .heart {
+            position: relative;
+            width: 150px;
+            height: 135px;
+            animation: pulse var(--all-animations-duration) infinite alternate-reverse;
+            animation-play-state: var(--defaultAnimationState);
+        }
+        
+        .heart:before,
+        .heart:after {
+            position: absolute;
+            content: "";
+            left: 75px;
+            top: 0;
+            width: 75px;
+            height: 120px;
+            background: #ff0000;
+            border-radius: 75px 75px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+            animation: HeartColor var(--all-animations-duration) infinite alternate-reverse;
+            animation-play-state: var(--defaultAnimationState);
+        }
+        
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+        
+        .heart span {
+            position: relative;
+            top: 30px;
+            left: 40px;
+            z-index: 1;
+            animation: ChangeColor var(--all-animations-duration) infinite alternate-reverse;
+            animation-play-state: var(--defaultAnimationState);
+            font-family: 'Lovers Quarrel', cursive;
+            font-weight: bold;
+            font-size: 52px;
+        }
+        
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.7); }
+        }
+        
+        @keyframes ChangeBGcolor {
+            from { background-color: var(--color); }
+            to { background-color: var(--bgColor); }
+        }
+        
+        @keyframes h1Change {
+            from { color: var(--bgColor); }
+            to { color: var(--color); }
+        }
+        
+        @keyframes HeartColor {
+            from { background-color: var(--bgColor); }
+            to { background-color: var(--color); }
+        }
+        
+        @keyframes ChangeColor {
+            from { color: var(--color); }
+            to { color: var(--bgColor); }
+        }
+        
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            color: #666;
+            text-align: center;
+            animation: h1Change var(--all-animations-duration) infinite alternate-reverse;
+            animation-play-state: var(--defaultAnimationState);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-quote">تو خود قلب منی بچه:)</h1>
+    <div class="heart" id="heart">
+        <span>Ailin</span>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const heart = document.getElementById('heart');
+            heart.addEventListener('click', function() {
+                const currentState = getComputedStyle(document.documentElement)
+                    .getPropertyValue('--defaultAnimationState');
+                
+                const newState = currentState.trim() === 'running' ? 'paused' : 'running';
+                document.documentElement.style.setProperty('--defaultAnimationState', newState);
+            });
+        });
+    </script>
+</body>
+</html>
