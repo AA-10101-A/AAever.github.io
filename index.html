@@ -2,12 +2,17 @@
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A♾️A</title>
   <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="32x32">
   <style>
     @font-face {
       font-family: a;
       src: url(./katibeh.ttf);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
@@ -19,28 +24,35 @@
       justify-content: center;
       align-items: center;
       font-family: a;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      padding: 20px;
     }
 
     .card {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(10px);
-      padding: 40px;
+      padding: 40px 30px;
       border-radius: 20px;
       text-align: center;
       box-shadow: 0 0 30px rgba(0, 120, 255, 0.3);
       max-width: 350px;
+      width: 100%;
       border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
     }
 
     h1 {
       color: #8bbcff;
+      font-size: 24px;
+      margin: 0 0 15px;
     }
 
     p {
       font-size: 18px;
       color: #dbe9ff;
       margin: 10px 0;
+      word-break: break-word;
     }
 
     button {
@@ -55,6 +67,8 @@
       cursor: pointer;
       transition: 0.3s;
       box-shadow: 0 5px 15px rgba(30,79,255,0.5);
+      width: 100%;
+      max-width: 250px;
     }
 
     button:hover {
@@ -70,13 +84,37 @@
     }
 
     @keyframes floatUp {
-      from {
-        transform: translateY(0);
-        opacity: 1;
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-220px); opacity: 0; }
+    }
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+        max-width: 90%;
       }
-      to {
-        transform: translateY(-220px);
-        opacity: 0;
+
+      h1 {
+        font-size: 20px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+
+      .float {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-height: 600px) {
+      body {
+        align-items: flex-start;
+        padding-top: 30px;
       }
     }
   </style>
@@ -101,7 +139,6 @@
 
   <script>
     const messages = [
-      "سلام آیلین خوشگلم",
       "خیلی عاشتقم بچه",
       "دوستت دارممم🩵",
       "تو خیلی خوشگلی نانازی",
@@ -110,11 +147,13 @@
       "تو خیلی تو دل برویی:)",
       "تو خیلی آروم جونمی",
       "تو عمر این آدمی",
+      "تو پناه امن منی",
+      "عاشق بغلتم عزیزم",
+      "با داشتن تو خوشبخت ترینم:)",
       "تو نقطه امن منــی💕"
     ];
 
     const emojis = ["🩵", "✨", "💕", "💋"];
-
     let clickCount = 0;
 
     function changeMessage() {
@@ -161,6 +200,5 @@
       updateKissDisplay();
     }, 1000);
   </script>
-
 </body>
 </html>
