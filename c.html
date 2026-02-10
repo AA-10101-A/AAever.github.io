@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="fa">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ha?</title>
     <style>
+        @font-face {
+            font-family: a;
+            src: url(./katibeh.ttf);
+        }
         body {
             display: flex;
             justify-content: center;
@@ -10,23 +16,28 @@
             height: 100vh;
             margin: 0;
             background-color: black;
-            font-family: Arial, sans-serif;
+            font-family: a;
+            padding: 20px;
+            text-align: center;
         }
         
         .buttons {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         
         .btn {
-            padding: 20px 30px;
+            padding: 20px 25px;
             font-size: 18px;
-            border: none;
+            border: 3px white solid;
             border-radius: 21px;
             cursor: pointer;
             text-decoration: none;
             color: white;
             display: inline-block;
+            transition: transform 0.2s, background 0.2s;
         }
         
         .btn-1 {
@@ -36,16 +47,22 @@
         .btn-2 {
             background-color: #3498db;
         }
-        
         .btn:hover {
             opacity: 0.9;
+            transform: scale(1.05);
+        }
+        @media (max-width: 480px) {
+            .btn {
+                padding: 15px 25px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="buttons">
-        <a href="https://aa-10101-a.github.io/AAever.github.io/she.html" target="_blank" class="btn btn-1">1</a>
-        <a href="https://aa-10101-a.github.io/AAever.github.io/index.html" target="_blank" class="btn btn-2">2</a>
+        <a href="https://aa-10101-a.github.io/AAever.github.io/she.html" target="_blank" class="btn btn-1">ماست</a>
+        <a href="https://aa-10101-a.github.io/AAever.github.io/index.html" target="_blank" class="btn btn-2">شارژر</a>
     </div>
 </body>
 </html>
