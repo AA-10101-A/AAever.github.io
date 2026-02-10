@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A♾️A</title>
+<link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+<style>
+  @font-face {
+    font-family: a;
+    src: url(./Mj_Ghalam-1.TTF);
+  }
+  :root {
+    --bg-color: #01010a;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: radial-gradient(ellipse at bottom, #0a0a1a 0%, #01010a 100%);
+    font-family: a;
+    direction: rtl;
+  }
+
+  canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 0;
+  }
+
+  .poem-wrap {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .poem {
+    width: min(880px, 92%);
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px 36px;
+    color: #f9f9f9;
+    backdrop-filter: blur(8px);
+    animation: pulse 6s ease-in-out infinite;
+    box-shadow: 0 0 30px rgba(255,255,255,0.05);
+  }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 25px rgba(255,255,255,0.12); }
+    50% { box-shadow: 0 0 55px rgba(255,255,255,0.25); }
+  }
+
+  h1 {
+    margin-bottom: 10px;
+    color: #fffad8;
+  }
+  p {
+    color: gold;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+
+<audio id="background-music">
+  <source src="./1|5 - Papillon - Belgian Navy Band (320).mp3" type="audio/mp3">
+</audio>
+
+<div class="poem-wrap">
+  <div class="poem">
+    <h1>من عاشق چشماتم :)</h1>
+    <p>به یک نظر دل ما را ربود و خندان گفت:<br>که من نکردم و این کارِ چشمِ مستِ من است</p>
+  </div>
+</div>
+
+<script>
+  const audio = document.getElementById('background-music');
+  const h1Element = document.querySelector('h1');
+
+  h1Element.addEventListener('click', () => {
+    audio.play().catch((err) => {
+      console.log('Error playing audio:', err);
+    });
+  });
+
+  const canvas = document.getElementById('sky');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const STAR_COUNT = Math.floor(W * H / 800);
+  const stars = [];
+  function createStar() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.6 + Math.random() * 1.8,
+      hue: 200 + Math.random() * 80,
+      alpha: 0.6 + Math.random() * 0.4,
+      twinkle: 0.8 + Math.random() * 0.8,
+      glow: 0.15 + Math.random() * 0.25,
+      speed: 0.02 + Math.random() * 0.04
+    };
+  }
+  for (let i = 0; i < STAR_COUNT; i++) stars.push(createStar());
+  function drawStar(s) {
+    const grd = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 5);
+    grd.addColorStop(0, `hsla(${s.hue}, 100%, 90%, ${s.alpha})`);
+    grd.addColorStop(0.4, `hsla(${s.hue}, 100%, 70%, ${s.glow})`);
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.fillStyle = grd;
+    ctx.arc(s.x, s.y, s.r * 5, 0, Math.PI * 2);
+    ctx.fill();
+    if (Math.random() < 0.001) {
+      ctx.beginPath();
+      ctx.moveTo(s.x - s.r, s.y);
+      ctx.lineTo(s.x + s.r, s.y);
+      ctx.moveTo(s.x, s.y - s.r);
+      ctx.lineTo(s.x, s.y + s.r);
+      ctx.strokeStyle = `hsla(${s.hue}, 100%, 95%, 0.7)`;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+  }
+  let t = 0;
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(0,0,20,0.6)";
+    ctx.fillRect(0, 0, W, H);
+    t += 0.015;
+    for (let s of stars) {
+      s.alpha = 0.5 + 0.5 * Math.sin(t * s.twinkle + s.x);
+      s.x += Math.sin(t * 0.2 + s.y) * 0.02;
+      s.y += Math.cos(t * 0.1 + s.x) * 0.02;
+      if (s.x < 0) s.x = W;
+      if (s.x > W) s.x = 0;
+      if (s.y < 0) s.y = H;
+      if (s.y > H) s.y = 0;
+      drawStar(s);
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+</script>
+</body>
+</html>
