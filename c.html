@@ -9,9 +9,11 @@
             font-family: a;
             src: url(./katibeh.ttf);
         }
+        *{
+          font-family: a;
+        }
         body {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -21,13 +23,13 @@
             padding: 20px;
             text-align: center;
         }
-        
+
         .buttons {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px; /* space before new button */
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 20px 40px;
+            justify-items: center;
+            align-items: center;
         }
 
         .btn {
@@ -41,20 +43,61 @@
             display: inline-block;
             transition: transform 0.2s, background 0.2s;
         }
-        
-        .btn-1, .btn-2, .btn-3 {
+
+        .btn-1, .btn-2, .btn-3, .btn-4 {
             background-color: #3498db;
         }
-        
+
         .btn:hover {
             opacity: 0.9;
             transform: scale(1.05);
         }
 
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: black;
+            padding: 0;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 600px;
+        }
+
+        .modal-content video {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         @media (max-width: 480px) {
             .btn {
-                padding: 15px 25px;
+                padding: 15px 20px;
                 font-size: 16px;
+            }
+            .buttons {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -63,7 +106,43 @@
     <div class="buttons">
         <a href="https://aa-10101-a.github.io/AAever.github.io/she.html" target="_blank" class="btn btn-1">ماست</a>
         <a href="https://aa-10101-a.github.io/AAever.github.io/index.html" target="_blank" class="btn btn-2">شارژر</a>
+        <a href="https://aa-10101-a.github.io/AAever.github.io/meail.html" target="_blank" class="btn btn-3">نامه</a>
+        <button class="btn btn-4" id="videoBtn">آیلین</button>
     </div>
-    <a href="https://aa-10101-a.github.io/AAever.github.io/meail.html" target="_blank" class="btn btn-3">نامه</a>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <video id="modalVideo" controls loop>
+                <source src="./Film.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("videoModal");
+        const btn = document.getElementById("videoBtn");
+        const close = document.getElementById("closeModal");
+        const video = document.getElementById("modalVideo");
+
+        btn.onclick = () => {
+            modal.style.display = "flex";
+            video.play();
+        }
+
+        close.onclick = () => {
+            modal.style.display = "none";
+            video.pause();
+            video.currentTime = 0;
+        }
+
+        window.onclick = (e) => {
+            if (e.target == modal) {
+                modal.style.display = "none";
+                video.pause();
+                video.currentTime = 0;
+            }
+        }
+    </script>
 </body>
 </html>
