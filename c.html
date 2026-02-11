@@ -11,6 +11,7 @@
         }
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -26,8 +27,9 @@
             gap: 20px;
             flex-wrap: wrap;
             justify-content: center;
+            margin-bottom: 20px; /* space before new button */
         }
-        
+
         .btn {
             padding: 20px 25px;
             font-size: 18px;
@@ -40,17 +42,15 @@
             transition: transform 0.2s, background 0.2s;
         }
         
-        .btn-1 {
+        .btn-1, .btn-2, .btn-3 {
             background-color: #3498db;
         }
         
-        .btn-2 {
-            background-color: #3498db;
-        }
         .btn:hover {
             opacity: 0.9;
             transform: scale(1.05);
         }
+
         @media (max-width: 480px) {
             .btn {
                 padding: 15px 25px;
@@ -64,5 +64,6 @@
         <a href="https://aa-10101-a.github.io/AAever.github.io/she.html" target="_blank" class="btn btn-1">ماست</a>
         <a href="https://aa-10101-a.github.io/AAever.github.io/index.html" target="_blank" class="btn btn-2">شارژر</a>
     </div>
+    <a href="https://aa-10101-a.github.io/AAever.github.io/meail.html" target="_blank" class="btn btn-3">نامه</a>
 </body>
 </html>
