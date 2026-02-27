@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meow</title>
+<style>
+    @font-face {
+        font-family: a;
+        src: url(./Pinar-Bold.ttf);
+    }
+    body{
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #c3f0ff, #a0e9ff);
+        font-family: a;
+    }
+    button {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 2px solid white;
+        font-family: a;
+        background-color: #1E90FF;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+    }
+    button:hover {
+        transform: scale(1.1);
+        background-color: #104E8B;
+        box-shadow: 0 12px 20px rgba(0,0,0,0.4);
+    }
+</style>
+</head>
+<body>
+  <button onclick="playSound()">گولَم بزن بیب</button>
+  <audio id="sound" src="./New Project.ogg" loop></audio>
+<script>
+function playSound() {
+    const audio = document.getElementById("sound");
+    audio.play();
+}
+</script>
+</body>
+</html>
