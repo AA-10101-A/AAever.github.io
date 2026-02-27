@@ -15,30 +15,41 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #c3f0ff, #a0e9ff);
+        background: darkkhaki;
         font-family: a;
     }
     button {
         width: 120px;
         height: 120px;
         border-radius: 50%;
-        border: 2px solid white;
+        border: 2px dotted white;
         font-family: a;
         background-color: #1E90FF;
         color: white;
-        font-size: 18px;
+        font-size: 15px;
         font-weight: bold;
         cursor: pointer;
         box-shadow: 0 8px 15px rgba(0,0,0,0.3);
         transition: none;
     }
+    button:disabled {
+        background-color: #87CEFA;
+        cursor: not-allowed;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
 </style>
 </head>
 <body>
-  <button onclick="showAlert()">گولَم بزن بیب</button>
+  <button id="btn" onclick="playSoundAndAlert()">گولَم بزن بیب</button>
+  <audio id="sound" src="./New Project.ogg" loop></audio>
 <script>
-function showAlert() {
+function playSoundAndAlert() {
+    const btn = document.getElementById("btn");
+    const audio = document.getElementById("sound");
+    audio.play();
     alert("رو چشمم هانیی");
+    btn.innerText = "در حال گول زدن";
+    btn.disabled = true;
 }
 </script>
 </body>
