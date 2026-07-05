@@ -619,6 +619,7 @@
         let animationId = null;
         let comboCount = 0;
         
+        // متغیرهای فیکس باگ‌ها
         let lastTime = 0;
         let canRestart = false; 
 
@@ -668,6 +669,7 @@
 
         const emojiOptions = document.querySelectorAll('.emoji-option');
         
+        // رفع باگ دبل کلیک در موبایل (جایگزین click و touchend)
         emojiOptions.forEach(option => {
             option.addEventListener('pointerdown', function(e) {
                 e.preventDefault();
@@ -714,6 +716,7 @@
             setupInputListeners();
         }
 
+        // تابع کمکی برای آپدیت ابعاد (رفع باگ ریست شدن موبایل)
         function updateCanvasDimensions() {
             if(!canvas) return;
             const wrapper = document.getElementById('canvasWrapper');
@@ -732,6 +735,7 @@
             paddle.width = Math.max(85, canvasWidth * 0.32) - (score * 1.8);
             if(paddle.width < 65) paddle.width = 65;
             
+            // جلوگیری از خروج پدل و توپ به خاطر تغییر سایز
             if(paddle.x + paddle.width > canvasWidth) paddle.x = Math.max(0, canvasWidth - paddle.width);
             if(ball.x > canvasWidth) ball.x = canvasWidth - ball.radius;
             if(ball.y > canvasHeight && !gameOver) ball.y = canvasHeight - ball.radius;
@@ -863,12 +867,13 @@
             }
         }
 
+        // رفع مشکل ۱۲۰ هرتز با استفاده از timestamp و Delta Time
         function gameLoop(timestamp) {
             if (!gameRunning) return;
             
             if (!timestamp) timestamp = performance.now();
-            let dt = (timestamp - lastTime) / 16.666;
-            if (dt > 3) dt = 3;
+            let dt = (timestamp - lastTime) / 16.666; // نرمال سازی روی 60 فریم
+            if (dt > 3) dt = 3; // جلوگیری از پرش زیاد در صورت لگ سیستم
             lastTime = timestamp;
 
             if (!gameOver) update(dt);
@@ -882,7 +887,7 @@
 
             ball.trail.push({ x: ball.x, y: ball.y, life: 1 });
             if (ball.trail.length > 15) ball.trail.shift();
-            ball.trail.forEach(t => t.life -= 0.07 * dt);
+            ball.trail.forEach(t => t.life -= 0.07 * dt); // کاهش عمر رد توپ بر اساس dt
 
             if (ball.x - ball.radius <= 0) {
                 ball.dx = Math.abs(ball.dx);
@@ -948,6 +953,7 @@
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
+            // رندر رد توپ (Trail) - رفع غیب شدن ایموجی
             ball.trail.forEach((t) => {
                 if (t.life > 0) {
                     ctx.save();
@@ -966,6 +972,7 @@
 
             drawParticles();
 
+            // رسم پدل (Paddle)
             ctx.save();
             const padGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
             padGrad.addColorStop(0, '#dbeafe');
@@ -988,9 +995,10 @@
             ctx.fill();
             ctx.restore();
 
+            // رندر خود توپ (ایموجی) - رفع غیب شدن ایموجی
             ctx.save();
             ctx.globalAlpha = 1.0;
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#ffffff'; // ✨ فیکس باگ شفافیت
             ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
             ctx.shadowBlur = 0;
             ctx.shadowOffsetX = 0;
@@ -1025,6 +1033,7 @@
                 ctx.fillStyle = '#bfdbfe';
                 ctx.font = `${subSize}px "a"`;
                 
+                // تا زمانی که کاربر اجازه کلیک نداره پیام رو نشون نده یا تغییر بده
                 if (canRestart) {
                     ctx.fillText('یه دست دیگه بازی کنیم؟ (کلیک)', canvasWidth/2, canvasHeight/2 + scoreSize * 1.5);
                 }
