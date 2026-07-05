@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Emoji Pong - Galaxy</title>
+    <title>Alin</title>
     <style>
         :root {
             --primary: #93c5fd;
@@ -595,6 +595,7 @@
             }
         }
         createGalaxySky();
+        
         const lovePhrases = [
             "✨ تو این بازی از تو بهتر وجود ندارهه ✨",
             "💫 فدای اون انگشتای کوچولوت بشم 💫",
@@ -605,8 +606,7 @@
             "💖 باریکلا به تووو 💖",
             "🌸 تو بهترین اتفاق زندگیمی 🌸",
             "🔥 دیگه داری بازیو به آتیش میکشیا 🔥",
-            "میدونستی اصلا نمیتونی تو این بازی ببازی؟",
-            "خوشگلتر از تورو گاییدم:)"
+            "میدونستی اصلا نمیتونی تو این بازی ببازی؟"
         ];
 
         function getRandomLovePhrase() {
@@ -618,6 +618,9 @@
         let gameRunning = false;
         let animationId = null;
         let comboCount = 0;
+        
+        let lastTime = 0;
+        let canRestart = false; 
 
         let ball = {
             x: 0, y: 0,
@@ -652,7 +655,9 @@
             stopGame();
             
             setTimeout(() => {
-                requestAnimationFrame(initGame);
+                requestAnimationFrame(() => {
+                    initGame();
+                });
             }, 300);
         }
 
@@ -664,22 +669,7 @@
         const emojiOptions = document.querySelectorAll('.emoji-option');
         
         emojiOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                emojiOptions.forEach(o => o.classList.remove('selected'));
-                this.classList.add('selected');
-                
-                const emoji = this.dataset.emoji;
-                
-                this.style.transform = 'scale(1.15)';
-                setTimeout(() => {
-                    startGameWithEmoji(emoji);
-                }, 200);
-            });
-
-            option.addEventListener('touchend', function(e) {
+            option.addEventListener('pointerdown', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
@@ -699,6 +689,33 @@
             canvas = document.getElementById('gameCanvas');
             ctx = canvas.getContext('2d');
 
+            updateCanvasDimensions();
+
+            paddle.x = canvasWidth / 2 - paddle.width / 2;
+            
+            resetBall();
+            score = 0;
+            comboCount = 0;
+            gameOver = false;
+            canRestart = false;
+            particles = [];
+            ball.trail = [];
+            
+            document.getElementById('canvasWrapper').classList.remove('game-over-glow');
+            document.getElementById('comboMini').textContent = '';
+            updateScore();
+
+            lastTime = performance.now();
+            if (!gameRunning) {
+                gameRunning = true;
+                animationId = requestAnimationFrame(gameLoop);
+            }
+
+            setupInputListeners();
+        }
+
+        function updateCanvasDimensions() {
+            if(!canvas) return;
             const wrapper = document.getElementById('canvasWrapper');
             canvasWidth = wrapper.clientWidth;
             canvasHeight = wrapper.clientHeight;
@@ -710,29 +727,14 @@
             canvas.style.height = canvasHeight + 'px';
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.scale(dpr, dpr);
-
-            paddle.x = canvasWidth / 2 - paddle.width / 2;
-            paddle.y = canvasHeight - Math.max(35, canvasHeight * 0.08);
-            paddle.width = Math.max(85, canvasWidth * 0.32);
-            paddle.height = Math.max(10, canvasHeight * 0.025);
-
-            resetBall();
-            score = 0;
-            comboCount = 0;
-            gameOver = false;
-            particles = [];
-            ball.trail = [];
             
-            document.getElementById('canvasWrapper').classList.remove('game-over-glow');
-            document.getElementById('comboMini').textContent = '';
-            updateScore();
-
-            if (!gameRunning) {
-                gameRunning = true;
-                gameLoop();
-            }
-
-            setupInputListeners();
+            paddle.y = canvasHeight - Math.max(35, canvasHeight * 0.08);
+            paddle.width = Math.max(85, canvasWidth * 0.32) - (score * 1.8);
+            if(paddle.width < 65) paddle.width = 65;
+            
+            if(paddle.x + paddle.width > canvasWidth) paddle.x = Math.max(0, canvasWidth - paddle.width);
+            if(ball.x > canvasWidth) ball.x = canvasWidth - ball.radius;
+            if(ball.y > canvasHeight && !gameOver) ball.y = canvasHeight - ball.radius;
         }
 
         function resetBall() {
@@ -754,7 +756,6 @@
             canvas.removeEventListener('mousemove', handleMouseMove);
             canvas.removeEventListener('touchstart', handleTouchStart);
             canvas.removeEventListener('touchmove', handleTouchMove);
-            canvas.removeEventListener('touchend', handleTouchEnd);
             canvas.removeEventListener('mousedown', handleMouseDown);
             canvas.removeEventListener('click', handleCanvasClick);
 
@@ -762,7 +763,6 @@
             canvas.addEventListener('mousedown', handleMouseDown);
             canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
             canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-            canvas.addEventListener('touchend', handleTouchEnd);
             canvas.addEventListener('click', handleCanvasClick);
         }
 
@@ -778,7 +778,7 @@
 
         function handleMouseDown(e) {
             if (gameOver) {
-                goToPicker();
+                if(canRestart) goToPicker();
                 return;
             }
             updatePaddleFromX(e.clientX);
@@ -791,7 +791,7 @@
 
         function handleTouchStart(e) {
             if (gameOver) {
-                goToPicker();
+                if(canRestart) goToPicker();
                 return;
             }
             e.preventDefault();
@@ -804,11 +804,8 @@
             updatePaddleFromX(e.touches[0].clientX);
         }
 
-        function handleTouchEnd(e) {
-        }
-
         function handleCanvasClick(e) {
-            if (gameOver) {
+            if (gameOver && canRestart) {
                 goToPicker();
             }
         }
@@ -829,12 +826,12 @@
             }
         }
 
-        function updateParticles() {
+        function updateParticles(dt) {
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life -= p.decay;
+                p.x += p.vx * dt; // محاسبه بر اساس dt
+                p.y += p.vy * dt;
+                p.life -= p.decay * dt;
                 if (p.life <= 0) particles.splice(i, 1);
             }
         }
@@ -866,20 +863,26 @@
             }
         }
 
-        function gameLoop() {
+        function gameLoop(timestamp) {
             if (!gameRunning) return;
-            if (!gameOver) update();
+            
+            if (!timestamp) timestamp = performance.now();
+            let dt = (timestamp - lastTime) / 16.666;
+            if (dt > 3) dt = 3;
+            lastTime = timestamp;
+
+            if (!gameOver) update(dt);
             draw();
             animationId = requestAnimationFrame(gameLoop);
         }
 
-        function update() {
-            ball.x += ball.dx;
-            ball.y += ball.dy;
+        function update(dt) {
+            ball.x += ball.dx * dt;
+            ball.y += ball.dy * dt;
 
             ball.trail.push({ x: ball.x, y: ball.y, life: 1 });
             if (ball.trail.length > 15) ball.trail.shift();
-            ball.trail.forEach(t => t.life -= 0.07);
+            ball.trail.forEach(t => t.life -= 0.07 * dt);
 
             if (ball.x - ball.radius <= 0) {
                 ball.dx = Math.abs(ball.dx);
@@ -924,13 +927,16 @@
 
             if (ball.y - ball.radius > canvasHeight) {
                 gameOver = true;
+                canRestart = false; 
+                setTimeout(() => { canRestart = true; }, 1000); // رفع باگ کلیک بلافاصله بعد از باخت
+                
                 ball.y = canvasHeight + ball.radius;
                 comboCount = 0;
                 document.getElementById('comboMini').textContent = '';
                 document.getElementById('canvasWrapper').classList.add('game-over-glow');
             }
 
-            updateParticles();
+            updateParticles(dt);
         }
 
         function draw() {
@@ -942,15 +948,15 @@
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-            // رندر رد توپ (Trail) - رفع قطعی مشکل آیفون
             ball.trail.forEach((t) => {
                 if (t.life > 0) {
                     ctx.save();
                     ctx.globalAlpha = t.life * 0.22;
+                    ctx.fillStyle = '#ffffff'; // ✨ فیکس باگ شفافیت
                     ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
                     ctx.shadowBlur = 0;
                     const fs = Math.floor(ball.radius * 1.3);
-                    ctx.font = `${fs}px Arial, "Apple Color Emoji", sans-serif`; 
+                    ctx.font = `${fs}px sans-serif`; 
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(selectedEmoji, t.x, t.y);
@@ -960,7 +966,6 @@
 
             drawParticles();
 
-            // رسم پدل (Paddle)
             ctx.save();
             const padGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
             padGrad.addColorStop(0, '#dbeafe');
@@ -977,21 +982,21 @@
             ctx.shadowBlur = 0;
             const hlGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height/2);
             hlGrad.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-            hlGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            hlGrad.addColorStop(1, 'rgba(255, 255, 255, 0)'); // این خط باعث غیب شدن ایموجی ها میشد که با fillStyle بالا حل شد
             ctx.fillStyle = hlGrad;
             roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height/2, 10);
             ctx.fill();
             ctx.restore();
 
-            // رندر خود توپ (ایموجی) - رفع قطعی مشکل آیفون
             ctx.save();
             ctx.globalAlpha = 1.0;
+            ctx.fillStyle = '#ffffff';
             ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
             ctx.shadowBlur = 0;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
             const fsMain = Math.floor(ball.radius * 2);
-            ctx.font = `${fsMain}px Arial, "Apple Color Emoji", sans-serif`; 
+            ctx.font = `${fsMain}px sans-serif`; 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(selectedEmoji, ball.x, ball.y);
@@ -1019,7 +1024,10 @@
                 
                 ctx.fillStyle = '#bfdbfe';
                 ctx.font = `${subSize}px "a"`;
-                ctx.fillText('یه دست دیگه بازی کنیم؟', canvasWidth/2, canvasHeight/2 + scoreSize * 1.5);
+                
+                if (canRestart) {
+                    ctx.fillText('یه دست دیگه بازی کنیم؟ (کلیک)', canvasWidth/2, canvasHeight/2 + scoreSize * 1.5);
+                }
             }
         }
 
@@ -1044,11 +1052,6 @@
             setTimeout(() => display.classList.remove('pop'), 180);
         }
 
-        function restartGame() {
-            stopGame();
-            initGame();
-        }
-
         function stopGame() {
             gameRunning = false;
             if (animationId) {
@@ -1056,26 +1059,16 @@
                 animationId = null;
             }
         }
-
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                if (document.getElementById('gameScreen').classList.contains('active')) {
-                    stopGame();
-                    initGame();
+                if (document.getElementById('gameScreen').classList.contains('active') && !gameOver) {
+                    updateCanvasDimensions();
                 }
             }, 250);
         });
 
-        window.addEventListener('orientationchange', () => {
-            setTimeout(() => {
-                if (document.getElementById('gameScreen').classList.contains('active')) {
-                    stopGame();
-                    initGame();
-                }
-            }, 300);
-        });
     </script>
 </body>
 </html>
