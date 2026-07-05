@@ -369,7 +369,7 @@
 
         .canvas-wrapper {
             position: relative;
-            flex: 1 1 auto; 
+            flex: 1 1 auto;
             width: 100%;
             height: 100%;
             border-radius: var(--radius-md);
@@ -378,6 +378,8 @@
             border: 2px solid rgba(147, 197, 253, 0.12);
             transition: border-color 0.5s, box-shadow 0.5s;
             min-height: 100px;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
         .canvas-wrapper.game-over-glow {
@@ -539,64 +541,40 @@
         (function(){
             function createGalaxySky() {
                 const sky = document.getElementById('galaxySky');
-                
                 const nebulae = [
                     { color: 'rgba(147, 197, 253, 0.35)', top: '10%', left: '15%', size: '30vmax' },
                     { color: 'rgba(96, 165, 250, 0.25)', top: '55%', left: '65%', size: '25vmax' },
                     { color: 'rgba(191, 219, 254, 0.2)', top: '35%', left: '5%', size: '22vmax' },
                     { color: 'rgba(147, 197, 253, 0.18)', top: '70%', left: '25%', size: '28vmax' },
                 ];
-                
                 nebulae.forEach(n => {
                     const el = document.createElement('div');
                     el.className = 'nebula';
-                    el.style.cssText = `
-                        background: ${n.color};
-                        top: ${n.top}; left: ${n.left};
-                        width: ${n.size}; height: ${n.size};
-                    `;
+                    el.style.cssText = `background: ${n.color}; top: ${n.top}; left: ${n.left}; width: ${n.size}; height: ${n.size};`;
                     sky.appendChild(el);
                 });
-
-                const starCount = 180;
+                const starCount = 80;
                 for (let i = 0; i < starCount; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
-                    const size = Math.random() * 4.5 + 1;
-                    const duration = Math.random() * 5 + 2;
-                    const delay = Math.random() * 6;
+                    const size = Math.random() * 3 + 1;
+                    const duration = Math.random() * 4 + 2;
+                    const delay = Math.random() * 5;
                     const top = Math.random() * 100;
                     const left = Math.random() * 100;
                     const colors = ['#ffffff', '#bfdbfe', '#fde68a', '#a5f3fc', '#fbcfe8', '#e9d5ff', '#ffffff', '#dbeafe'];
                     const color = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    star.style.cssText = `
-                        width: ${size}px;
-                        height: ${size}px;
-                        top: ${top}%;
-                        left: ${left}%;
-                        background: ${color};
-                        box-shadow: 0 0 ${size * 2.5}px ${color};
-                        --duration: ${duration}s;
-                        --delay: ${delay}s;
-                    `;
+                    star.style.cssText = `width: ${size}px; height: ${size}px; top: ${top}%; left: ${left}%; background: ${color}; box-shadow: 0 0 ${size * 2}px ${color}; --duration: ${duration}s; --delay: ${delay}s;`;
                     sky.appendChild(star);
                 }
-
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < 3; i++) {
                     const shootingStar = document.createElement('div');
                     shootingStar.className = 'shooting-star';
-                    shootingStar.style.cssText = `
-                        top: ${Math.random() * 40}%;
-                        left: ${Math.random() * 50 + 40}%;
-                        --shoot-duration: ${Math.random() * 5 + 3}s;
-                        --shoot-delay: ${Math.random() * 10}s;
-                    `;
+                    shootingStar.style.cssText = `top: ${Math.random() * 40}%; left: ${Math.random() * 50 + 40}%; --shoot-duration: ${Math.random() * 5 + 3}s; --shoot-delay: ${Math.random() * 10}s;`;
                     sky.appendChild(shootingStar);
                 }
             }
             createGalaxySky();
-            
             const lovePhrases = [
                 "✨ تو این بازی از تو بهتر وجود ندارهه ✨",
                 "💫 فدای اون انگشتای کوچولوت بشم 💫",
@@ -609,94 +587,67 @@
                 "🔥 دیگه داری بازیو به آتیش میکشیا 🔥",
                 "میدونستی اصلا نمیتونی تو این بازی ببازی؟"
             ];
-
             function getRandomLovePhrase() {
                 return lovePhrases[Math.floor(Math.random() * lovePhrases.length)];
             }
-
             let canvas, ctx;
             let selectedEmoji = '😂';
             let gameRunning = false;
             let animationId = null;
             let comboCount = 0;
-            
             let lastTime = 0;
-            let canRestart = false; 
-
+            let canRestart = false;
             let cachedBgGradient = null;
+            let cachedFontSize = 0;
+            let cachedFont = '';
             const EMOJI_FONT_STACK = '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", sans-serif';
-
-            let ball = {
-                x: 0, y: 0,
-                radius: 24,
-                dx: 0, dy: 0,
-                speed: 0,
-                trail: []
-            };
-
-            let paddle = {
-                width: 130,
-                height: 14,
-                x: 0, y: 0
-            };
-
+            let ball = { x: 0, y: 0, radius: 24, dx: 0, dy: 0, speed: 0, trail: [] };
+            let paddle = { width: 130, height: 14, x: 0, y: 0 };
             let score = 0;
             let gameOver = false;
             let particles = [];
             let canvasWidth = 0;
             let canvasHeight = 0;
             let dpr = 1;
-
+            let lastScoreUpdate = 0;
             function showScreen(screenId) {
                 document.querySelectorAll('.picker-screen, .game-screen').forEach(s => s.classList.remove('active'));
                 document.getElementById(screenId).classList.add('active');
             }
-
             function startGameWithEmoji(emoji) {
                 selectedEmoji = emoji;
                 document.getElementById('currentEmojiDisplay').textContent = emoji;
                 showScreen('gameScreen');
                 stopGame();
-                
                 setTimeout(() => {
                     requestAnimationFrame(() => {
                         initGame();
                     });
                 }, 300);
             }
-
             function goToPicker() {
                 stopGame();
                 showScreen('pickerScreen');
             }
-
             const emojiOptions = document.querySelectorAll('.emoji-option');
-            
             emojiOptions.forEach(option => {
                 option.addEventListener('pointerdown', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
                     emojiOptions.forEach(o => o.classList.remove('selected'));
                     this.classList.add('selected');
-                    
                     const emoji = this.dataset.emoji;
-                    
                     this.style.transform = 'scale(1.15)';
                     setTimeout(() => {
                         startGameWithEmoji(emoji);
                     }, 200);
                 });
             });
-
             function initGame() {
                 canvas = document.getElementById('gameCanvas');
-                ctx = canvas.getContext('2d', { alpha: false });
-
+                ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
                 updateCanvasDimensions();
-
                 paddle.x = canvasWidth / 2 - paddle.width / 2;
-                
                 resetBall();
                 score = 0;
                 comboCount = 0;
@@ -704,26 +655,23 @@
                 canRestart = false;
                 particles = [];
                 ball.trail = [];
-                
+                cachedFontSize = 0;
+                cachedFont = '';
                 document.getElementById('canvasWrapper').classList.remove('game-over-glow');
                 document.getElementById('comboMini').textContent = '';
                 updateScore();
-
                 lastTime = performance.now();
                 if (!gameRunning) {
                     gameRunning = true;
                     animationId = requestAnimationFrame(gameLoop);
                 }
-
                 setupInputListeners();
             }
-
             function updateCanvasDimensions() {
                 if(!canvas) return;
                 const wrapper = document.getElementById('canvasWrapper');
                 canvasWidth = wrapper.clientWidth;
                 canvasHeight = wrapper.clientHeight;
-                
                 dpr = Math.min(window.devicePixelRatio || 1, 2);
                 canvas.width = canvasWidth * dpr;
                 canvas.height = canvasHeight * dpr;
@@ -731,59 +679,48 @@
                 canvas.style.height = canvasHeight + 'px';
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.scale(dpr, dpr);
-
                 cachedBgGradient = ctx.createRadialGradient(canvasWidth/2, canvasHeight/2, 0, canvasWidth/2, canvasHeight/2, Math.max(canvasWidth, canvasHeight));
                 cachedBgGradient.addColorStop(0, '#0a1628');
                 cachedBgGradient.addColorStop(1, '#060610');
-                
                 paddle.y = canvasHeight - Math.max(35, canvasHeight * 0.08);
                 paddle.width = Math.max(85, canvasWidth * 0.32) - (score * 1.8);
                 if(paddle.width < 65) paddle.width = 65;
-                
                 if(paddle.x + paddle.width > canvasWidth) paddle.x = Math.max(0, canvasWidth - paddle.width);
                 if(ball.x > canvasWidth) ball.x = canvasWidth - ball.radius;
                 if(ball.y > canvasHeight && !gameOver) ball.y = canvasHeight - ball.radius;
             }
-
             function resetBall() {
                 ball.x = canvasWidth / 2;
                 ball.y = canvasHeight / 2;
                 ball.radius = Math.max(16, Math.min(canvasWidth * 0.055, 28));
-                
                 const angle = (Math.random() * Math.PI / 2.2) + Math.PI / 3.5;
                 const direction = Math.random() < 0.5 ? 1 : -1;
-                
                 ball.speed = 4.5 + (score * 0.25);
                 ball.speed = Math.min(ball.speed, 18);
                 ball.dx = ball.speed * Math.cos(angle) * direction;
                 ball.dy = -ball.speed * Math.sin(angle);
                 ball.trail = [];
             }
-
             function setupInputListeners() {
                 canvas.removeEventListener('mousemove', handleMouseMove);
                 canvas.removeEventListener('touchstart', handleTouchStart);
                 canvas.removeEventListener('touchmove', handleTouchMove);
                 canvas.removeEventListener('mousedown', handleMouseDown);
                 canvas.removeEventListener('click', handleCanvasClick);
-
                 canvas.addEventListener('mousemove', handleMouseMove);
                 canvas.addEventListener('mousedown', handleMouseDown);
                 canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
                 canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
                 canvas.addEventListener('click', handleCanvasClick);
             }
-
             function getCanvasX(clientX) {
                 const rect = canvas.getBoundingClientRect();
                 return clientX - rect.left;
             }
-
             function updatePaddleFromX(clientX) {
                 const x = getCanvasX(clientX);
                 paddle.x = Math.max(0, Math.min(x - paddle.width / 2, canvasWidth - paddle.width));
             }
-
             function handleMouseDown(e) {
                 if (gameOver) {
                     if(canRestart) goToPicker();
@@ -791,12 +728,10 @@
                 }
                 updatePaddleFromX(e.clientX);
             }
-
             function handleMouseMove(e) {
                 if (gameOver) return;
                 updatePaddleFromX(e.clientX);
             }
-
             function handleTouchStart(e) {
                 if (gameOver) {
                     if(canRestart) goToPicker();
@@ -805,21 +740,19 @@
                 e.preventDefault();
                 updatePaddleFromX(e.touches[0].clientX);
             }
-
             function handleTouchMove(e) {
                 if (gameOver) return;
                 e.preventDefault();
                 updatePaddleFromX(e.touches[0].clientX);
             }
-
             function handleCanvasClick(e) {
                 if (gameOver && canRestart) {
                     goToPicker();
                 }
             }
-
             function spawnParticles(x, y, count) {
-                for (let i = 0; i < count; i++) {
+                const actualCount = Math.min(count, 8);
+                for (let i = 0; i < actualCount; i++) {
                     const angle = Math.random() * Math.PI * 2;
                     const speed = Math.random() * 5 + 2;
                     particles.push({
@@ -833,22 +766,19 @@
                     });
                 }
             }
-
             function updateParticles(dt) {
                 for (let i = particles.length - 1; i >= 0; i--) {
                     const p = particles[i];
-                    p.x += p.vx * dt; 
+                    p.x += p.vx * dt;
                     p.y += p.vy * dt;
                     p.life -= p.decay * dt;
                     if (p.life <= 0) particles.splice(i, 1);
                 }
             }
-
             function drawParticles() {
                 ctx.save();
                 ctx.shadowBlur = 0;
                 ctx.shadowColor = 'transparent';
-                
                 particles.forEach(p => {
                     ctx.globalAlpha = p.life;
                     ctx.fillStyle = p.color;
@@ -858,7 +788,6 @@
                 });
                 ctx.restore();
             }
-
             function showLoveCombo() {
                 comboCount++;
                 const miniEl = document.getElementById('comboMini');
@@ -871,145 +800,117 @@
                     setTimeout(() => popup.remove(), 3000);
                 }
             }
-
             function gameLoop(timestamp) {
                 if (!gameRunning) return;
-                
-                if (!timestamp) timestamp = performance.now();
-                let dt = (timestamp - lastTime) / 16.666; 
-                if (dt > 3) dt = 3; 
+                if (!lastTime) lastTime = timestamp;
+                const dt = Math.min((timestamp - lastTime) / 16.667, 2);
                 lastTime = timestamp;
-
                 if (!gameOver) update(dt);
                 draw();
                 animationId = requestAnimationFrame(gameLoop);
             }
-
             function update(dt) {
                 ball.x += ball.dx * dt;
                 ball.y += ball.dy * dt;
-
                 ball.trail.push({ x: ball.x, y: ball.y, life: 1 });
-                if (ball.trail.length > 8) ball.trail.shift();
+                if (ball.trail.length > 4) ball.trail.shift();
                 ball.trail.forEach(t => t.life -= 0.09 * dt);
-
                 if (ball.x - ball.radius <= 0) {
                     ball.dx = Math.abs(ball.dx);
                     ball.x = ball.radius;
-                    spawnParticles(ball.x, ball.y, 8);
+                    spawnParticles(ball.x, ball.y, 4);
                 }
                 if (ball.x + ball.radius >= canvasWidth) {
                     ball.dx = -Math.abs(ball.dx);
                     ball.x = canvasWidth - ball.radius;
-                    spawnParticles(ball.x, ball.y, 8);
+                    spawnParticles(ball.x, ball.y, 4);
                 }
                 if (ball.y - ball.radius <= 0) {
                     ball.dy = Math.abs(ball.dy);
                     ball.y = ball.radius;
-                    spawnParticles(ball.x, ball.y, 8);
+                    spawnParticles(ball.x, ball.y, 4);
                 }
-
                 if (ball.y + ball.radius >= paddle.y &&
                     ball.y - ball.radius <= paddle.y + paddle.height &&
                     ball.x + ball.radius >= paddle.x &&
                     ball.x - ball.radius <= paddle.x + paddle.width) {
-                    
                     ball.dy = -Math.abs(ball.dy);
                     ball.y = paddle.y - ball.radius;
-                    
                     score++;
                     updateScore();
                     showLoveCombo();
-                    spawnParticles(ball.x, ball.y, 18);
-                    
+                    spawnParticles(ball.x, ball.y, 8);
                     const hitPos = (ball.x - paddle.x) / paddle.width;
                     const maxAngle = Math.PI / 2.2;
                     const newAngle = -Math.PI / 2 + (hitPos - 0.5) * maxAngle;
-                    
                     ball.speed = 4.5 + (score * 0.28);
                     ball.speed = Math.min(ball.speed, 19);
                     ball.dx = ball.speed * Math.cos(newAngle);
                     ball.dy = -ball.speed * Math.abs(Math.sin(newAngle));
-                    
                     paddle.width = Math.max(65, 130 - score * 1.8);
                 }
-
                 if (ball.y - ball.radius > canvasHeight) {
                     gameOver = true;
-                    canRestart = false; 
-                    setTimeout(() => { canRestart = true; }, 1000); 
-                    
+                    canRestart = false;
+                    setTimeout(() => { canRestart = true; }, 1000);
                     ball.y = canvasHeight + ball.radius;
                     comboCount = 0;
                     document.getElementById('comboMini').textContent = '';
                     document.getElementById('canvasWrapper').classList.add('game-over-glow');
                 }
-
                 updateParticles(dt);
             }
-
             function draw() {
                 ctx.fillStyle = cachedBgGradient || '#060610';
                 ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
                 ball.trail.forEach((t) => {
                     if (t.life > 0) {
                         ctx.save();
                         ctx.globalAlpha = t.life * 0.2;
-                        ctx.fillStyle = '#ffffff'; 
+                        ctx.fillStyle = '#ffffff';
                         ctx.shadowBlur = 0;
                         const fs = Math.floor(ball.radius * 1.2);
-                        ctx.font = `${fs}px ${EMOJI_FONT_STACK}`; 
+                        ctx.font = `${fs}px ${EMOJI_FONT_STACK}`;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillText(selectedEmoji, t.x, t.y);
                         ctx.restore();
                     }
                 });
-
                 drawParticles();
-
                 ctx.save();
                 const padGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
                 padGrad.addColorStop(0, '#dbeafe');
                 padGrad.addColorStop(0.4, '#bfdbfe');
                 padGrad.addColorStop(0.7, '#93c5fd');
                 padGrad.addColorStop(1, '#60a5fa');
-                
-                ctx.shadowColor = 'rgba(147, 197, 253, 0.5)';
-                ctx.shadowBlur = 12;
+                ctx.shadowColor = 'rgba(147, 197, 253, 0.3)';
+                ctx.shadowBlur = 6;
                 ctx.fillStyle = padGrad;
                 roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height, 10);
                 ctx.fill();
-                
                 ctx.shadowBlur = 0;
-                const hlGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height/2);
-                hlGrad.addColorStop(0, 'rgba(255, 255, 255, 0.45)');
-                hlGrad.addColorStop(1, 'rgba(255, 255, 255, 0)'); 
-                ctx.fillStyle = hlGrad;
-                roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height/2, 10);
-                ctx.fill();
                 ctx.restore();
-
                 ctx.save();
                 ctx.globalAlpha = 1.0;
-                ctx.fillStyle = '#ffffff'; 
+                ctx.fillStyle = '#ffffff';
                 ctx.shadowBlur = 0;
                 const fsMain = Math.floor(ball.radius * 2);
-                ctx.font = `${fsMain}px ${EMOJI_FONT_STACK}`; 
+                if (fsMain !== cachedFontSize) {
+                    cachedFontSize = fsMain;
+                    cachedFont = `${fsMain}px ${EMOJI_FONT_STACK}`;
+                }
+                ctx.font = cachedFont;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(selectedEmoji, ball.x, ball.y);
                 ctx.restore();
-
                 if (gameOver) {
                     ctx.fillStyle = 'rgba(6, 6, 16, 0.82)';
                     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-                    
                     const titleSize = Math.min(canvasWidth * 0.085, 36);
                     const scoreSize = Math.min(canvasWidth * 0.075, 30);
                     const subSize = Math.min(canvasWidth * 0.042, 18);
-                    
                     ctx.fillStyle = '#93c5fd';
                     ctx.font = `bold ${titleSize}px "a"`;
                     ctx.textAlign = 'center';
@@ -1017,20 +918,16 @@
                     ctx.shadowBlur = 25;
                     ctx.fillText('بازی خراب شد..😔', canvasWidth/2, canvasHeight/2 - titleSize * 0.7);
                     ctx.shadowBlur = 0;
-                    
                     ctx.fillStyle = '#ffffff';
                     ctx.font = `bold ${scoreSize}px "a"`;
                     ctx.fillText(`🌟 طلب بوس ${score} 🌟`, canvasWidth/2, canvasHeight/2 + scoreSize * 0.5);
-                    
                     ctx.fillStyle = '#bfdbfe';
                     ctx.font = `${subSize}px "a"`;
-                    
                     if (canRestart) {
                         ctx.fillText('یه دست دیگه بازی کنیم؟ (کلیک)', canvasWidth/2, canvasHeight/2 + scoreSize * 1.5);
                     }
                 }
             }
-
             function roundRect(ctx, x, y, w, h, r) {
                 ctx.beginPath();
                 ctx.moveTo(x + r, y);
@@ -1041,17 +938,18 @@
                 ctx.lineTo(x + r, y + h);
                 ctx.quadraticCurveTo(x, y + h, x, y + h - r);
                 ctx.lineTo(x, y + r);
-                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.quadraticCurveTo(x, y, x, y + r);
                 ctx.closePath();
             }
-
             function updateScore() {
+                const now = performance.now();
+                if (now - lastScoreUpdate < 100) return;
+                lastScoreUpdate = now;
                 const display = document.getElementById('scoreDisplay');
                 display.textContent = score;
                 display.classList.add('pop');
                 setTimeout(() => display.classList.remove('pop'), 180);
             }
-
             function stopGame() {
                 gameRunning = false;
                 if (animationId) {
@@ -1059,7 +957,6 @@
                     animationId = null;
                 }
             }
-
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
