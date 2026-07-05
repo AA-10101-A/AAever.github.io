@@ -10,7 +10,7 @@
             --primary-dark: #60a5fa;
             --primary-light: #bfdbfe;
             --primary-pale: #dbeafe;
-            --bg-deep: #060610;
+            --bg-deep: #0a1628;
             --text-primary: #ffffff;
             --text-secondary: #bfdbfe;
             --text-muted: #8b8ba8;
@@ -40,7 +40,7 @@
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
-            background: #060610;
+            background: #0a1628;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             -webkit-user-select: none;
@@ -49,76 +49,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .galaxy-sky {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            background: white;
-            animation: twinkle var(--duration) ease-in-out infinite;
-            animation-delay: var(--delay);
-            will-change: transform, opacity;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.25; transform: scale(1); }
-            20% { opacity: 1; transform: scale(2); }
-            40% { opacity: 0.35; transform: scale(1); }
-            60% { opacity: 0.9; transform: scale(1.6); }
-            80% { opacity: 0.4; transform: scale(1); }
-        }
-
-        .shooting-star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.9), 0 0 15px 4px rgba(147, 197, 253, 0.7);
-            animation: shoot var(--shoot-duration) linear infinite;
-            animation-delay: var(--shoot-delay);
-            opacity: 0;
-        }
-
-        .shooting-star::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 70px;
-            height: 1px;
-            background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
-            right: 100%;
-        }
-
-        @keyframes shoot {
-            0% { opacity: 0; transform: translate(0, 0) rotate(-35deg); }
-            4% { opacity: 1; }
-            12% { opacity: 0; transform: translate(-350px, 250px) rotate(-35deg); }
-            100% { opacity: 0; transform: translate(-350px, 250px) rotate(-35deg); }
-        }
-
-        .nebula {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(70px);
-            animation: nebulaPulse 8s ease-in-out infinite;
-            will-change: transform, opacity;
-        }
-
-        @keyframes nebulaPulse {
-            0%, 100% { transform: scale(1); opacity: 0.25; }
-            50% { transform: scale(1.25); opacity: 0.45; }
         }
 
         .app-container {
@@ -392,7 +322,7 @@
             width: 100%;
             height: 100%;
             touch-action: none;
-            background: #060610;
+            background: #0a1628;
             cursor: none;
         }
 
@@ -492,8 +422,6 @@
     </style>
 </head>
 <body>
-    <div class="galaxy-sky" id="galaxySky"></div>
-
     <div class="app-container" id="appContainer">
         <div class="picker-screen active" id="pickerScreen">
             <div class="picker-card">
@@ -539,42 +467,6 @@
 
     <script>
         (function(){
-            function createGalaxySky() {
-                const sky = document.getElementById('galaxySky');
-                const nebulae = [
-                    { color: 'rgba(147, 197, 253, 0.35)', top: '10%', left: '15%', size: '30vmax' },
-                    { color: 'rgba(96, 165, 250, 0.25)', top: '55%', left: '65%', size: '25vmax' },
-                    { color: 'rgba(191, 219, 254, 0.2)', top: '35%', left: '5%', size: '22vmax' },
-                    { color: 'rgba(147, 197, 253, 0.18)', top: '70%', left: '25%', size: '28vmax' },
-                ];
-                nebulae.forEach(n => {
-                    const el = document.createElement('div');
-                    el.className = 'nebula';
-                    el.style.cssText = `background: ${n.color}; top: ${n.top}; left: ${n.left}; width: ${n.size}; height: ${n.size};`;
-                    sky.appendChild(el);
-                });
-                const starCount = 80;
-                for (let i = 0; i < starCount; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    const size = Math.random() * 3 + 1;
-                    const duration = Math.random() * 4 + 2;
-                    const delay = Math.random() * 5;
-                    const top = Math.random() * 100;
-                    const left = Math.random() * 100;
-                    const colors = ['#ffffff', '#bfdbfe', '#fde68a', '#a5f3fc', '#fbcfe8', '#e9d5ff', '#ffffff', '#dbeafe'];
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    star.style.cssText = `width: ${size}px; height: ${size}px; top: ${top}%; left: ${left}%; background: ${color}; box-shadow: 0 0 ${size * 2}px ${color}; --duration: ${duration}s; --delay: ${delay}s;`;
-                    sky.appendChild(star);
-                }
-                for (let i = 0; i < 3; i++) {
-                    const shootingStar = document.createElement('div');
-                    shootingStar.className = 'shooting-star';
-                    shootingStar.style.cssText = `top: ${Math.random() * 40}%; left: ${Math.random() * 50 + 40}%; --shoot-duration: ${Math.random() * 5 + 3}s; --shoot-delay: ${Math.random() * 10}s;`;
-                    sky.appendChild(shootingStar);
-                }
-            }
-            createGalaxySky();
             const lovePhrases = [
                 "✨ تو این بازی از تو بهتر وجود ندارهه ✨",
                 "💫 فدای اون انگشتای کوچولوت بشم 💫",
@@ -597,7 +489,6 @@
             let comboCount = 0;
             let lastTime = 0;
             let canRestart = false;
-            let cachedBgGradient = null;
             let cachedFontSize = 0;
             let cachedFont = '';
             const EMOJI_FONT_STACK = '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", sans-serif';
@@ -679,9 +570,6 @@
                 canvas.style.height = canvasHeight + 'px';
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.scale(dpr, dpr);
-                cachedBgGradient = ctx.createRadialGradient(canvasWidth/2, canvasHeight/2, 0, canvasWidth/2, canvasHeight/2, Math.max(canvasWidth, canvasHeight));
-                cachedBgGradient.addColorStop(0, '#0a1628');
-                cachedBgGradient.addColorStop(1, '#060610');
                 paddle.y = canvasHeight - Math.max(35, canvasHeight * 0.08);
                 paddle.width = Math.max(85, canvasWidth * 0.32) - (score * 1.8);
                 if(paddle.width < 65) paddle.width = 65;
@@ -861,7 +749,7 @@
                 updateParticles(dt);
             }
             function draw() {
-                ctx.fillStyle = cachedBgGradient || '#060610';
+                ctx.fillStyle = '#0a1628';
                 ctx.fillRect(0, 0, canvasWidth, canvasHeight);
                 ball.trail.forEach((t) => {
                     if (t.life > 0) {
