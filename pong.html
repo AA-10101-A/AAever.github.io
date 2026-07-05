@@ -37,8 +37,8 @@
 
         html, body {
             width: 100%;
-            height: 100vh; /* Fallback */
-            height: 100dvh; /* Fix for iOS safari bottom bar */
+            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             background: #060610;
             -webkit-tap-highlight-color: transparent;
@@ -369,7 +369,7 @@
 
         .canvas-wrapper {
             position: relative;
-            flex: 1 1 auto; /* Ensures it grows to take remaining height */
+            flex: 1 1 auto; 
             width: 100%;
             height: 100%;
             border-radius: var(--radius-md);
@@ -651,7 +651,6 @@
             showScreen('gameScreen');
             stopGame();
             
-            // زمان دادن به مرورگر برای محاسبه دقیق ارتفاع کانتینر
             setTimeout(() => {
                 requestAnimationFrame(initGame);
             }, 300);
@@ -701,7 +700,6 @@
             ctx = canvas.getContext('2d');
 
             const wrapper = document.getElementById('canvasWrapper');
-            // گرفتن دقیق ارتفاع محاسبه شده
             canvasWidth = wrapper.clientWidth;
             canvasHeight = wrapper.clientHeight;
             
@@ -944,15 +942,15 @@
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-            // رندر رد توپ (Trail) - رفع مشکل آیفون
+            // رندر رد توپ (Trail) - رفع قطعی مشکل آیفون
             ball.trail.forEach((t) => {
                 if (t.life > 0) {
                     ctx.save();
                     ctx.globalAlpha = t.life * 0.22;
-                    ctx.shadowColor = 'transparent'; // خنثی کردن مطلق سایه
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
                     ctx.shadowBlur = 0;
                     const fs = Math.floor(ball.radius * 1.3);
-                    ctx.font = `${fs}px sans-serif`; // استفاده از فونت سیستم
+                    ctx.font = `${fs}px Arial, "Apple Color Emoji", sans-serif`; 
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(selectedEmoji, t.x, t.y);
@@ -962,6 +960,7 @@
 
             drawParticles();
 
+            // رسم پدل (Paddle)
             ctx.save();
             const padGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
             padGrad.addColorStop(0, '#dbeafe');
@@ -984,15 +983,15 @@
             ctx.fill();
             ctx.restore();
 
-            // رندر خود توپ (ایموجی) - رفع مشکل آیفون
+            // رندر خود توپ (ایموجی) - رفع قطعی مشکل آیفون
             ctx.save();
             ctx.globalAlpha = 1.0;
-            ctx.shadowColor = 'transparent'; // خنثی کردن مطلق سایه
+            ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
             ctx.shadowBlur = 0;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
-            const fs = Math.floor(ball.radius * 2);
-            ctx.font = `${fs}px sans-serif`; // استفاده از فونت سیستم
+            const fsMain = Math.floor(ball.radius * 2);
+            ctx.font = `${fsMain}px Arial, "Apple Color Emoji", sans-serif`; 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(selectedEmoji, ball.x, ball.y);
