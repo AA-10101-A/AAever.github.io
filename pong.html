@@ -619,9 +619,13 @@
         let animationId = null;
         let comboCount = 0;
         
-        // متغیرهای فیکس باگ‌ها
         let lastTime = 0;
         let canRestart = false; 
+
+        // متغیر کش شده برای پس زمینه (جلوگیری از ساخت مجدد در هر فریم)
+        let cachedBgGradient = null;
+        // فونت استک تخصصی برای ایموجی های ترکیبی
+        const EMOJI_FONT_STACK = '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "EmojiOne Color", "Android Emoji", sans-serif';
 
         let ball = {
             x: 0, y: 0,
@@ -669,7 +673,6 @@
 
         const emojiOptions = document.querySelectorAll('.emoji-option');
         
-        // رفع باگ دبل کلیک در موبایل (جایگزین click و touchend)
         emojiOptions.forEach(option => {
             option.addEventListener('pointerdown', function(e) {
                 e.preventDefault();
@@ -689,7 +692,7 @@
 
         function initGame() {
             canvas = document.getElementById('gameCanvas');
-            ctx = canvas.getContext('2d');
+            ctx = canvas.getContext('2d', { alpha: false }); // alpha:false کمی به پرفورمنس کمک میکند
 
             updateCanvasDimensions();
 
@@ -716,7 +719,6 @@
             setupInputListeners();
         }
 
-        // تابع کمکی برای آپدیت ابعاد (رفع باگ ریست شدن موبایل)
         function updateCanvasDimensions() {
             if(!canvas) return;
             const wrapper = document.getElementById('canvasWrapper');
@@ -730,12 +732,16 @@
             canvas.style.height = canvasHeight + 'px';
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.scale(dpr, dpr);
+
+            // کش کردن پس زمینه برای جلوگیری از لگ شدید در هر فریم
+            cachedBgGradient = ctx.createRadialGradient(canvasWidth/2, canvasHeight/2, 0, canvasWidth/2, canvasHeight/2, Math.max(canvasWidth, canvasHeight));
+            cachedBgGradient.addColorStop(0, '#0a1628');
+            cachedBgGradient.addColorStop(1, '#060610');
             
             paddle.y = canvasHeight - Math.max(35, canvasHeight * 0.08);
             paddle.width = Math.max(85, canvasWidth * 0.32) - (score * 1.8);
             if(paddle.width < 65) paddle.width = 65;
             
-            // جلوگیری از خروج پدل و توپ به خاطر تغییر سایز
             if(paddle.x + paddle.width > canvasWidth) paddle.x = Math.max(0, canvasWidth - paddle.width);
             if(ball.x > canvasWidth) ball.x = canvasWidth - ball.radius;
             if(ball.y > canvasHeight && !gameOver) ball.y = canvasHeight - ball.radius;
@@ -833,7 +839,7 @@
         function updateParticles(dt) {
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
-                p.x += p.vx * dt; // محاسبه بر اساس dt
+                p.x += p.vx * dt; 
                 p.y += p.vy * dt;
                 p.life -= p.decay * dt;
                 if (p.life <= 0) particles.splice(i, 1);
@@ -841,17 +847,19 @@
         }
 
         function drawParticles() {
+            // حذف سایه بلور (shadowBlur) از ذرات، علت اصلی لگ موبایل همین بود!
+            ctx.save();
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+            
             particles.forEach(p => {
-                ctx.save();
                 ctx.globalAlpha = p.life;
                 ctx.fillStyle = p.color;
-                ctx.shadowColor = p.color;
-                ctx.shadowBlur = 10;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.restore();
             });
+            ctx.restore();
         }
 
         function showLoveCombo() {
@@ -867,13 +875,12 @@
             }
         }
 
-        // رفع مشکل ۱۲۰ هرتز با استفاده از timestamp و Delta Time
         function gameLoop(timestamp) {
             if (!gameRunning) return;
             
             if (!timestamp) timestamp = performance.now();
-            let dt = (timestamp - lastTime) / 16.666; // نرمال سازی روی 60 فریم
-            if (dt > 3) dt = 3; // جلوگیری از پرش زیاد در صورت لگ سیستم
+            let dt = (timestamp - lastTime) / 16.666; 
+            if (dt > 3) dt = 3; 
             lastTime = timestamp;
 
             if (!gameOver) update(dt);
@@ -886,8 +893,9 @@
             ball.y += ball.dy * dt;
 
             ball.trail.push({ x: ball.x, y: ball.y, life: 1 });
-            if (ball.trail.length > 15) ball.trail.shift();
-            ball.trail.forEach(t => t.life -= 0.07 * dt); // کاهش عمر رد توپ بر اساس dt
+            // کاهش تعداد سایه‌های توپ از ۱۵ به ۱۰ برای روانی بیشتر
+            if (ball.trail.length > 10) ball.trail.shift();
+            ball.trail.forEach(t => t.life -= 0.09 * dt);
 
             if (ball.x - ball.radius <= 0) {
                 ball.dx = Math.abs(ball.dx);
@@ -933,7 +941,7 @@
             if (ball.y - ball.radius > canvasHeight) {
                 gameOver = true;
                 canRestart = false; 
-                setTimeout(() => { canRestart = true; }, 1000); // رفع باگ کلیک بلافاصله بعد از باخت
+                setTimeout(() => { canRestart = true; }, 1000); 
                 
                 ball.y = canvasHeight + ball.radius;
                 comboCount = 0;
@@ -945,24 +953,20 @@
         }
 
         function draw() {
-            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-            const bgGrad = ctx.createRadialGradient(canvasWidth/2, canvasHeight/2, 0, canvasWidth/2, canvasHeight/2, Math.max(canvasWidth, canvasHeight));
-            bgGrad.addColorStop(0, '#0a1628');
-            bgGrad.addColorStop(1, '#060610');
-            ctx.fillStyle = bgGrad;
+            // استفاده از پس‌زمینه کش شده برای پرفورمنس عالی
+            ctx.fillStyle = cachedBgGradient || '#060610';
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-            // رندر رد توپ (Trail) - رفع غیب شدن ایموجی
+            // رندر رد توپ 
             ball.trail.forEach((t) => {
                 if (t.life > 0) {
                     ctx.save();
                     ctx.globalAlpha = t.life * 0.22;
-                    ctx.fillStyle = '#ffffff'; // ✨ فیکس باگ شفافیت
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
+                    ctx.fillStyle = '#ffffff'; 
                     ctx.shadowBlur = 0;
                     const fs = Math.floor(ball.radius * 1.3);
-                    ctx.font = `${fs}px sans-serif`; 
+                    // اعمال فونت استک تخصصی ایموجی
+                    ctx.font = `${fs}px ${EMOJI_FONT_STACK}`; 
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(selectedEmoji, t.x, t.y);
@@ -972,7 +976,7 @@
 
             drawParticles();
 
-            // رسم پدل (Paddle)
+            // رسم پدل 
             ctx.save();
             const padGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height);
             padGrad.addColorStop(0, '#dbeafe');
@@ -981,7 +985,7 @@
             padGrad.addColorStop(1, '#60a5fa');
             
             ctx.shadowColor = 'rgba(147, 197, 253, 0.6)';
-            ctx.shadowBlur = 20;
+            ctx.shadowBlur = 15;
             ctx.fillStyle = padGrad;
             roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height, 10);
             ctx.fill();
@@ -989,22 +993,20 @@
             ctx.shadowBlur = 0;
             const hlGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + paddle.height/2);
             hlGrad.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-            hlGrad.addColorStop(1, 'rgba(255, 255, 255, 0)'); // این خط باعث غیب شدن ایموجی ها میشد که با fillStyle بالا حل شد
+            hlGrad.addColorStop(1, 'rgba(255, 255, 255, 0)'); 
             ctx.fillStyle = hlGrad;
             roundRect(ctx, paddle.x, paddle.y, paddle.width, paddle.height/2, 10);
             ctx.fill();
             ctx.restore();
 
-            // رندر خود توپ (ایموجی) - رفع غیب شدن ایموجی
+            // رندر خود توپ 
             ctx.save();
             ctx.globalAlpha = 1.0;
-            ctx.fillStyle = '#ffffff'; // ✨ فیکس باگ شفافیت
-            ctx.shadowColor = 'rgba(0, 0, 0, 0)'; 
+            ctx.fillStyle = '#ffffff'; 
             ctx.shadowBlur = 0;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
             const fsMain = Math.floor(ball.radius * 2);
-            ctx.font = `${fsMain}px sans-serif`; 
+            // اعمال فونت استک تخصصی ایموجی
+            ctx.font = `${fsMain}px ${EMOJI_FONT_STACK}`; 
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(selectedEmoji, ball.x, ball.y);
@@ -1033,7 +1035,6 @@
                 ctx.fillStyle = '#bfdbfe';
                 ctx.font = `${subSize}px "a"`;
                 
-                // تا زمانی که کاربر اجازه کلیک نداره پیام رو نشون نده یا تغییر بده
                 if (canRestart) {
                     ctx.fillText('یه دست دیگه بازی کنیم؟ (کلیک)', canvasWidth/2, canvasHeight/2 + scoreSize * 1.5);
                 }
@@ -1068,6 +1069,7 @@
                 animationId = null;
             }
         }
+
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
