@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دلیل حال خوبم^^</title>
+    <style>
+        @font-face {
+            font-family: a;
+            src: url(./katibeh_ttf.ttf);
+        }
+        body {
+            background-color: #050505;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: a;
+            position: relative;
+        }
+        #galaxy {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(ellipse at bottom, #011826 0%, #020202 100%);
+            opacity: 0;
+            transition: opacity 2.5s ease-in-out;
+            z-index: -1;
+            overflow: hidden;
+        }
+        #galaxy.show {
+            opacity: 1;
+        }
+        .stars-layer1, .stars-layer2 {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 10% 20%, #fff, transparent),
+                radial-gradient(2px 2px at 30% 40%, #e0f2fe, transparent),
+                radial-gradient(1px 1px at 50% 10%, #4db8ff, transparent),
+                radial-gradient(2px 2px at 70% 80%, #fff, transparent),
+                radial-gradient(1px 1px at 90% 30%, #fff, transparent),
+                radial-gradient(2.5px 2.5px at 20% 80%, #4db8ff, transparent),
+                radial-gradient(1px 1px at 80% 50%, #fff, transparent),
+                radial-gradient(2px 2px at 40% 60%, #bae6fd, transparent),
+                radial-gradient(1.5px 1.5px at 60% 90%, #fff, transparent);
+            background-size: 200px 200px;
+            animation: twinkle 3s ease-in-out infinite alternate;
+        }
+        .stars-layer2 {
+            background-size: 350px 350px;
+            background-position: 50px 50px;
+            animation-delay: 1.5s;
+            animation-duration: 4s;
+            opacity: 0.6;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.02); }
+        }
+        .container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        .scene {
+            position: relative;
+            width: 160px;
+            height: 250px;
+        }
+        .drop {
+            width: 10px;
+            height: 10px;
+            background-color: #012d43;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: 0 0 15px #012d43, 0 0 30px rgba(77, 184, 255, 0.6);
+            transition: top 0.8s cubic-bezier(0.6, 0.04, 0.98, 0.335), opacity 0.2s;
+            z-index: 20;
+        }
+        .drop.fall {
+            top: 110px;
+            opacity: 1;
+        }
+        .heart-wrapper {
+            position: absolute;
+            top: 90px;
+            left: 0;
+            width: 160px;
+            height: 160px;
+        }
+        .heart-layer {
+            position: absolute;
+            inset: 0;
+        }
+        .heart-shape {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            top: 60px;
+            left: 40px;
+            transform: rotate(-45deg);
+        }
+        .heart-shape::before, .heart-shape::after {
+            content: "";
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-color: inherit;
+            border-radius: 50%;
+        }
+        .heart-shape::before { top: -40px; left: 0; }
+        .heart-shape::after { top: 0; left: 40px; }
+        .black-heart { background-color: #161616; }
+        .black-layer { filter: drop-shadow(0 0 5px rgba(0,0,0,0.8)); }
+        .blue-heart { background-color: #012d43; }
+        #liquid-layer {
+            -webkit-clip-path: inset(100% 0 0 0);
+            clip-path: inset(100% 0 0 0);
+            transition: -webkit-clip-path 2.5s cubic-bezier(0.4, 0, 0.2, 1), clip-path 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #liquid-layer.fill {
+            -webkit-clip-path: inset(0 0 0 0);
+            clip-path: inset(0 0 0 0);
+        }
+        #glow-layer {
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 40px rgba(77, 184, 255, 0.9));
+        }
+        #glow-layer.show {
+            opacity: 1;
+        }
+        @keyframes dynamicHeart {
+            0% { transform: scale(1) translateY(0); }
+            15% { transform: scale(1.08) translateY(-3px); }
+            30% { transform: scale(1) translateY(0); }
+            45% { transform: scale(1.08) translateY(-3px); }
+            60% { transform: scale(1) translateY(0); }
+            100% { transform: scale(1) translateY(-8px); }
+        }
+        @keyframes floating {
+            0% { transform: translateY(-8px); }
+            50% { transform: translateY(2px); }
+            100% { transform: translateY(-8px); }
+        }
+        .heart-wrapper.beat {
+            animation: dynamicHeart 1.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+        .heart-wrapper.float {
+            animation: floating 4s ease-in-out infinite;
+        }
+        .message {
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            font-size: 1.3rem;
+            line-height: 2;
+            text-align: center;
+            color: #d1d1d1;
+            text-shadow: 0 0 15px rgba(1, 45, 67, 0.5);
+            margin-top: 10px;
+        }
+        .message.show {
+            opacity: 1;
+        }
+        .highlight {
+            color: #4db8ff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(77, 184, 255, 0.8);
+        }
+        button {
+            margin-top: 40px;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            background: transparent;
+            direction: ltr;
+            color: #555;
+            border: 2px solid #555;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: 0.4s;
+            font-family: inherit;
+        }
+        button:hover {
+            border-color: #4db8ff;
+            color: #fff;
+            background-color: #012d43;
+            box-shadow: 0 0 20px #012d43;
+        }
+        button.hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="notif-sound" src="./telegram-notification.mp3" preload="auto"></audio>
+    <audio id="bg-music" src="./New Project.mp3" loop preload="auto"></audio>
+
+    <div id="galaxy">
+        <div class="stars-layer1"></div>
+        <div class="stars-layer2"></div>
+    </div>
+
+    <div class="container">
+        <div class="scene">
+            <div class="drop" id="drop"></div>
+            
+            <div class="heart-wrapper" id="heart-wrapper">
+                <div class="heart-layer" id="glow-layer">
+                    <div class="heart-shape blue-heart"></div>
+                </div>
+                <div class="heart-layer black-layer">
+                    <div class="heart-shape black-heart"></div>
+                </div>
+                <div class="heart-layer" id="liquid-layer">
+                    <div class="heart-shape blue-heart"></div>
+                </div>
+            </div>
+        </div>
+        
+        <p class="message" id="message">
+            دیدی که صدای بهشتی تو<br>
+            چطوری <span class="highlight">همه وجودم</span> رو هم رنگ وایبت میکنه و نجاتم میده:)
+        </p>
+
+        <button id="btn">Send Voice...</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('btn');
+        const drop = document.getElementById('drop');
+        const galaxy = document.getElementById('galaxy');
+        const liquidLayer = document.getElementById('liquid-layer');
+        const glowLayer = document.getElementById('glow-layer');
+        const heartWrapper = document.getElementById('heart-wrapper');
+        const message = document.getElementById('message');
+        const notifSound = document.getElementById('notif-sound');
+        const bgMusic = document.getElementById('bg-music');
+
+        btn.addEventListener('click', () => {
+            notifSound.play().catch(error => console.log("", error));
+
+            btn.classList.add('hide');
+            drop.classList.add('fall');
+
+            setTimeout(() => {
+                drop.style.opacity = '0'; 
+                galaxy.classList.add('show');
+                liquidLayer.classList.add('fill');
+            }, 800);
+
+            setTimeout(() => {
+                glowLayer.classList.add('show');
+                heartWrapper.classList.add('beat');
+            }, 3300);
+
+            setTimeout(() => {
+                heartWrapper.classList.remove('beat');
+                heartWrapper.classList.add('float');
+                message.classList.add('show');
+                bgMusic.play().catch(error => console.log("", error));
+            }, 4500);
+        });
+    </script>
+
+</body>
+</html>
