@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You 💙</title>
+
+  <style>
+    @font-face {
+        font-family: a;
+        src: url(./katibeh.ttf);
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: a;
+      color: white;
+      direction: rtl;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(48, 113, 255, 0.35), transparent 26%),
+        radial-gradient(circle at 85% 35%, rgba(106, 72, 255, 0.28), transparent 28%),
+        radial-gradient(circle at 50% 85%, rgba(0, 160, 255, 0.20), transparent 30%),
+        linear-gradient(160deg, #020719 0%, #03133a 40%, #061e58 70%, #020718 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.48) 100%);
+      z-index: 1;
+    }
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      box-shadow:
+        0 0 6px rgba(255,255,255,0.95),
+        0 0 14px rgba(105,171,255,0.8);
+      animation:
+        twinkle var(--twinkle) ease-in-out infinite alternate,
+        drift var(--drift) ease-in-out infinite alternate;
+    }
+
+    .sparkle {
+      position: absolute;
+      color: #d9ecff;
+      text-shadow:
+        0 0 8px #ffffff,
+        0 0 18px #68a8ff;
+      animation:
+        sparklePulse var(--pulse) ease-in-out infinite alternate,
+        sparkleMove var(--move) ease-in-out infinite alternate;
+      opacity: 0.9;
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0.15;
+        transform: scale(0.55);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1.3);
+      }
+    }
+
+    @keyframes drift {
+      from {
+        translate: 0 0;
+      }
+
+      to {
+        translate: var(--moveX) var(--moveY);
+      }
+    }
+
+    @keyframes sparklePulse {
+      from {
+        opacity: 0.25;
+        transform: scale(0.7) rotate(0deg);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1.25) rotate(15deg);
+      }
+    }
+
+    @keyframes sparkleMove {
+      from {
+        translate: 0 0;
+      }
+
+      to {
+        translate: var(--sx) var(--sy);
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 45px 18px 70px;
+    }
+
+    .main-title {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .title-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 15px;
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(111, 172, 255, 0.24),
+          rgba(69, 90, 255, 0.12)
+        );
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.35),
+        0 15px 40px rgba(0, 99, 255, 0.25),
+        0 0 35px rgba(73, 134, 255, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      animation: iconFloat 3.2s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(-2deg);
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(2deg);
+      }
+    }
+
+    .main-title h1 {
+      margin: 0;
+      font-size: 31px;
+      line-height: 1.15;
+      background: linear-gradient(
+        90deg,
+        #ffffff,
+        #9acbff,
+        #d4e9ff,
+        #ffffff
+      );
+      background-size: 250%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: titleGlow 5s linear infinite;
+      text-shadow: 0 0 30px rgba(90, 160, 255, 0.2);
+    }
+
+    @keyframes titleGlow {
+      to {
+        background-position: 250% center;
+      }
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      margin-bottom: 22px;
+      border-radius: 30px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.14),
+          rgba(255, 255, 255, 0.055)
+        );
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.24),
+        inset 0 -1px 0 rgba(255,255,255,0.05),
+        0 22px 60px rgba(0,0,0,0.32),
+        0 0 45px rgba(41, 100, 255, 0.08);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      left: -70px;
+      top: -80px;
+      border-radius: 50%;
+      background: rgba(76, 144, 255, 0.18);
+      filter: blur(35px);
+      pointer-events: none;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      right: -70px;
+      bottom: -90px;
+      border-radius: 50%;
+      background: rgba(98, 81, 255, 0.16);
+      filter: blur(36px);
+      pointer-events: none;
+    }
+
+    .section-title {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .mini-icon {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      font-size: 19px;
+      background: rgba(255,255,255,0.11);
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .meter-number {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      font-size: 58px;
+      font-weight: 900;
+      margin: 15px 0 22px;
+      letter-spacing: -2px;
+      background: linear-gradient(180deg, #ffffff, #75b9ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 18px rgba(70, 150, 255, 0.35));
+    }
+
+    .slider-wrap {
+      position: relative;
+      z-index: 2;
+      direction: ltr;
+      padding: 8px 0;
+    }
+
+    .slider {
+      width: 100%;
+      height: 13px;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      border-radius: 50px;
+      background:
+        linear-gradient(
+          90deg,
+          #378dff 0%,
+          #7a7dff var(--value, 6%),
+          rgba(255,255,255,0.12) var(--value, 6%),
+          rgba(255,255,255,0.12) 100%
+        );
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.32),
+        0 0 22px rgba(61, 145, 255, 0.18);
+    }
+
+    .slider::-webkit-slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #ffffff 0 18%, #b8ddff 48%, #558eff 100%);
+      border: 3px solid rgba(255,255,255,0.9);
+      box-shadow:
+        0 0 0 6px rgba(73, 145, 255, 0.12),
+        0 7px 18px rgba(0,0,0,0.35),
+        0 0 25px rgba(77, 150, 255, 0.7);
+      cursor: grab;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 29px;
+      height: 29px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, #ffffff 0 18%, #b8ddff 48%, #558eff 100%);
+      border: 3px solid rgba(255,255,255,0.9);
+      box-shadow:
+        0 0 0 6px rgba(73, 145, 255, 0.12),
+        0 7px 18px rgba(0,0,0,0.35),
+        0 0 25px rgba(77, 150, 255, 0.7);
+    }
+
+    .meter-text {
+      position: relative;
+      z-index: 2;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-top: 17px;
+      font-size: 16px;
+      line-height: 1.45;
+      font-weight: 700;
+      color: #dcecff;
+    }
+
+    .love-icon {
+      display: inline-block;
+      margin: 0 4px;
+      filter: drop-shadow(0 0 8px rgba(106, 170, 255, 0.8));
+      animation: heartBeat 1s ease-in-out infinite;
+    }
+
+    @keyframes heartBeat {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      45% {
+        transform: scale(1.23);
+      }
+    }
+
+    .scratch-wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow:
+        inset 0 0 35px rgba(255,255,255,0.04),
+        0 15px 35px rgba(0,0,0,0.18);
+    }
+
+    .secret {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(91, 157, 255, 0.3), transparent 37%),
+        linear-gradient(145deg, #071a48, #0b2d6d);
+    }
+
+    .secret-icon {
+      width: 67px;
+      height: 67px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 22px;
+      margin-bottom: 13px;
+      font-size: 35px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,0.18),
+          rgba(255,255,255,0.07)
+        );
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.3),
+        0 12px 30px rgba(0,0,0,0.22),
+        0 0 35px rgba(77, 150, 255, 0.22);
+      animation: secretFloat 2.6s ease-in-out infinite;
+    }
+
+    @keyframes secretFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(-3deg);
+      }
+
+      50% {
+        transform: translateY(-6px) rotate(3deg);
+      }
+    }
+
+    .secret strong {
+      font-size: 22px;
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(108, 178, 255, 0.6);
+    }
+
+    .secret p {
+      margin: 9px 0 0;
+      max-width: 285px;
+      line-height: 1.55;
+      font-size: 15px;
+      color: #cfe6ff;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: pointer;
+    }
+
+    .floating-icon {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      filter: drop-shadow(0 0 8px rgba(104, 174, 255, 0.8));
+      animation: floatIcon 1.7s ease-out forwards;
+    }
+
+    @keyframes floatIcon {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.65) rotate(0deg);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-150px) scale(1.5) rotate(22deg);
+      }
+    }
+
+    @media (max-width: 380px) {
+      .container {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .main-title h1 {
+        font-size: 27px;
+      }
+
+      .meter-number {
+        font-size: 52px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="stars"></div>
+
+  <main class="container">
+
+    <div class="main-title">
+      <div class="title-icon">Alin</div>
+      <h1>تقدیم به فرشته خوشگل نانازم</h1>
+    </div>
+
+    <section class="card">
+      <div class="section-title">
+        <span>چنتا دوستت دارم؟!</span>
+      </div>
+
+      <div class="meter-number" id="loveNumber">04%</div>
+
+      <div class="slider-wrap">
+        <input
+          id="loveSlider"
+          class="slider"
+          type="range"
+          min="1"
+          max="150"
+          value="4"
+        >
+      </div>
+
+      <div class="meter-text" id="meterText">
+        Keep going... ✨
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <span>انگشت بزن!</span>
+      </div>
+
+      <div class="scratch-wrapper">
+        <div class="secret">
+          <div class="secret-icon">🩵</div>
+          <strong>سلاممم دختر قشنگمم</strong>
+          <p>
+            هرچی بیشتر می‌شناسمت، بیشتر می‌فهمم چقدر خوش‌شانس بودم که پیدات کردم:)
+          </p>
+        </div>
+
+        <canvas id="scratchCanvas"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const starsContainer = document.getElementById("stars");
+
+    for (let i = 0; i < 95; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+
+      const size = Math.random() * 3.2 + 0.8;
+
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.setProperty("--twinkle", 1.2 + Math.random() * 3.8 + "s");
+      star.style.setProperty("--drift", 3 + Math.random() * 8 + "s");
+      star.style.setProperty("--moveX", -15 + Math.random() * 30 + "px");
+      star.style.setProperty("--moveY", -15 + Math.random() * 30 + "px");
+      star.style.animationDelay = -Math.random() * 5 + "s";
+
+      starsContainer.appendChild(star);
+    }
+
+    const sparkleIcons = ["✦", "✧", "⋆", "✶", "✷"];
+
+    for (let i = 0; i < 18; i++) {
+      const sparkle = document.createElement("div");
+      sparkle.className = "sparkle";
+      sparkle.textContent =
+        sparkleIcons[Math.floor(Math.random() * sparkleIcons.length)];
+
+      sparkle.style.left = Math.random() * 100 + "%";
+      sparkle.style.top = Math.random() * 100 + "%";
+      sparkle.style.fontSize = 8 + Math.random() * 15 + "px";
+      sparkle.style.setProperty("--pulse", 1.5 + Math.random() * 3 + "s");
+      sparkle.style.setProperty("--move", 3 + Math.random() * 7 + "s");
+      sparkle.style.setProperty("--sx", -18 + Math.random() * 36 + "px");
+      sparkle.style.setProperty("--sy", -18 + Math.random() * 36 + "px");
+      sparkle.style.animationDelay = -Math.random() * 6 + "s";
+
+      starsContainer.appendChild(sparkle);
+    }
+
+    const slider = document.getElementById("loveSlider");
+    const number = document.getElementById("loveNumber");
+    const meterText = document.getElementById("meterText");
+
+    function updateLoveMeter() {
+      const value = Number(slider.value);
+      const percentage = (value / 150) * 100;
+
+      slider.style.setProperty("--value", percentage + "%");
+      number.textContent = value + "%";
+
+      if (value < 35) {
+        meterText.innerHTML = "برو بابا خیلی کمه";
+      } else if (value < 65) {
+        meterText.innerHTML = "بازم نوچ";
+      } else if (value < 90) {
+        meterText.innerHTML = "یکم نزدیکتر شدی";
+      } else if (value < 100) {
+        meterText.innerHTML = "دختر خوعبب ادامه بده";
+      } else if (value === 100) {
+        meterText.innerHTML = "واسه تویی که همه وجودمی باز کمه";
+      } else if (value < 120) {
+        meterText.innerHTML = "حالا بهتره";
+        createFloatingIcon();
+      } else if (value < 140) {
+        meterText.innerHTML = "قد یه دنیا عاشقتمم جیگرر🤏🏻";
+        createFloatingIcon();
+      } else {
+        number.textContent = "%∞";
+        meterText.innerHTML =
+          '<span class="love-icon">🩵</span>به اندازه خوشگلی چشات بود:)<span class="love-icon">✨</span>';
+
+        createFloatingIcon();
+        createFloatingIcon();
+        createFloatingIcon();
+      }
+    }
+
+    slider.addEventListener("input", updateLoveMeter);
+    updateLoveMeter();
+
+    function createFloatingIcon() {
+      const icons = ["🩵", "✨", "💋", "🤏🏻", "💕"];
+      const icon = document.createElement("div");
+
+      icon.className = "floating-icon";
+      icon.textContent = icons[Math.floor(Math.random() * icons.length)];
+      icon.style.left = 8 + Math.random() * 84 + "vw";
+      icon.style.top = 65 + Math.random() * 20 + "vh";
+      icon.style.fontSize = 18 + Math.random() * 18 + "px";
+
+      document.body.appendChild(icon);
+
+      setTimeout(() => {
+        icon.remove();
+      }, 1700);
+    }
+
+    const canvas = document.getElementById("scratchCanvas");
+    const ctx = canvas.getContext("2d");
+    const scratchAudio = new Audio("./scrath.mp3");
+    scratchAudio.loop = true;
+
+    let scratching = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    function setupScratch() {
+      const wrapper = canvas.parentElement;
+      const rect = wrapper.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * scale;
+      canvas.height = rect.height * scale;
+
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      ctx.globalCompositeOperation = "source-over";
+
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        rect.width,
+        rect.height
+      );
+
+      gradient.addColorStop(0, "#214fa1");
+      gradient.addColorStop(0.35, "#367ae0");
+      gradient.addColorStop(0.7, "#284db3");
+      gradient.addColorStop(1, "#162a70");
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      for (let i = 0; i < 45; i++) {
+        const x = Math.random() * rect.width;
+        const y = Math.random() * rect.height;
+        const r = Math.random() * 1.7 + 0.5;
+
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255," + (0.25 + Math.random() * 0.65) + ")";
+        ctx.fill();
+      }
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(255,255,255,0.95)";
+      ctx.font = "700 19px a";
+      ctx.shadowColor = "rgba(255,255,255,0.45)";
+      ctx.shadowBlur = 15;
+
+      ctx.fillText(
+        "✨ جوکرتم بانوو ✨",
+        rect.width / 2,
+        rect.height / 2
+      );
+
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 48;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+    }
+
+    function getPosition(e) {
+      const rect = canvas.getBoundingClientRect();
+
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function startScratch(e) {
+      scratching = true;
+      scratchAudio.currentTime = 0;
+      scratchAudio.play();
+
+      const pos = getPosition(e);
+
+      lastX = pos.x;
+      lastY = pos.y;
+
+      scratchLine(pos.x, pos.y, pos.x, pos.y);
+    }
+
+    function moveScratch(e) {
+      if (!scratching) return;
+
+      const pos = getPosition(e);
+
+      scratchLine(lastX, lastY, pos.x, pos.y);
+
+      lastX = pos.x;
+      lastY = pos.y;
+    }
+
+    function scratchLine(x1, y1, x2, y2) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+
+    canvas.addEventListener("pointerdown", startScratch);
+    canvas.addEventListener("pointermove", moveScratch);
+
+    window.addEventListener("pointerup", () => {
+      scratching = false;
+      scratchAudio.pause();
+      scratchAudio.currentTime = 0;
+    });
+
+    window.addEventListener("pointercancel", () => {
+      scratching = false;
+      scratchAudio.pause();
+      scratchAudio.currentTime = 0;
+    });
+
+    window.addEventListener("resize", setupScratch);
+    window.addEventListener("load", setupScratch);
+  </script>
+
+</body>
+</html>
