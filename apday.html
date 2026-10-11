@@ -1,0 +1,715 @@
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#100d2b">
+    <title>AA04</title>
+
+    <style>
+        :root {
+            --blue: #abedff;
+            --rose: #ffbce5;
+            --text: #f7f3ff;
+        }
+
+        @font-face {
+            font-family: a;
+            src: url(./katibeh.ttf);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            font-family: 'a', Tahoma, sans-serif;
+            background: #08071b;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: #a0deff66;
+        }
+
+        #sky {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .glow {
+            position: fixed;
+            inset: -20%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(ellipse at 70% 22%, #6f4bcb48, transparent 38%),
+                radial-gradient(ellipse at 12% 57%, #2387b942, transparent 42%),
+                radial-gradient(ellipse at 75% 90%, #f05da127, transparent 37%);
+            filter: blur(25px);
+            animation: drift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift {
+            to {
+                transform: translate(-5%, 4%) rotate(8deg);
+            }
+        }
+
+        .moon {
+            position: absolute;
+            top: 8vh;
+            left: 9%;
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle at 30% 25%,
+                #fff 0,
+                #d8f2ff 35%,
+                #9eafd9 80%
+            );
+            box-shadow: 0 0 28px #b2e6ffbb, 0 0 90px #96adff70;
+            opacity: .9;
+            animation: float 5s ease-in-out infinite alternate;
+            cursor: pointer;
+        }
+
+        .moon:focus-visible {
+            outline: 2px solid #c9f2ff;
+            outline-offset: 5px;
+        }
+
+        @keyframes float {
+            to {
+                transform: translateY(14px);
+            }
+        }
+
+        main {
+            width: min(100% - 34px, 490px);
+            margin: auto;
+            padding: 0 0 45vh;
+            position: relative;
+        }
+
+        .intro {
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 90px 5px 120px;
+        }
+
+        .tiny {
+            color: #b8b1e2;
+            letter-spacing: 3px;
+            font-size: 12px;
+        }
+
+        .heart {
+            font-size: 70px;
+            filter: drop-shadow(0 0 25px #72d7ff);
+            animation: pulse 2.7s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 40px #c7b0ff);
+            }
+        }
+
+        h1 {
+            font-size: clamp(26px, 7vw, 37px);
+            line-height: 1.9;
+            color: #d5f5ff;
+            text-shadow: 0 0 26px #9ddfff8c;
+            margin: 16px 0 8px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            line-height: 2.5;
+            color: #e4d5f8;
+        }
+
+        .down {
+            position: absolute;
+            bottom: 12vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #b6afdd;
+            animation: float 2s ease-in-out infinite alternate;
+        }
+
+        .down span {
+            font-size: 25px;
+        }
+
+        .story {
+            position: relative;
+        }
+
+        .para {
+            position: relative;
+            margin: 0 0 44px;
+            padding: 27px 23px;
+            background: linear-gradient(
+                135deg,
+                #3025538a,
+                #12294270 65%,
+                #2a193b76
+            );
+            border: 1px solid #c2d6ff2e;
+            border-radius: 25px;
+            box-shadow:
+                0 10px 40px #02031760,
+                inset 0 1px #ffffff14;
+            backdrop-filter: blur(12px);
+            font-size: clamp(15.5px, 4vw, 18px);
+            line-height: 2.65;
+            text-align: right;
+            opacity: 0;
+            transform: translateY(32px) scale(.98);
+            transition: opacity 1.6s ease, transform 1.6s ease;
+        }
+
+        .para.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .para:before {
+            content: '✦';
+            position: absolute;
+            top: -8px;
+            right: 23px;
+            color: #a9e7ff;
+            font-size: 21px;
+            text-shadow: 0 0 15px #90dcff;
+        }
+
+        .para strong {
+            color: #bdefff;
+            font-weight: 800;
+            text-shadow: 0 0 17px #73bde966;
+        }
+
+        .para:nth-child(3n) strong {
+            color: #ffc9ec;
+        }
+
+        .special {
+            text-align: center;
+            background: linear-gradient(125deg, #56336e91, #17395b91);
+            border-color: #ffd3f355;
+        }
+
+        .special strong {
+            font-size: 1.06em;
+            color: #fff0fb;
+        }
+
+        .ending {
+            text-align: center;
+            padding: 85px 14px 30px;
+            opacity: 0;
+            transform: translateY(25px);
+            transition: 1.5s;
+        }
+
+        .ending.show {
+            opacity: 1;
+            transform: none;
+        }
+
+        .ending .big {
+            font-size: 49px;
+            display: block;
+            animation: pulse 3s infinite;
+        }
+
+        .ending h2 {
+            color: #c7f2ff;
+            font-size: 24px;
+            line-height: 2;
+        }
+
+        .ending p {
+            font-size: 13px;
+            color: #ccbedf;
+        }
+
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            opacity: .55;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translate3d(45px, 110vh, 0) rotate(220deg);
+                opacity: 0;
+            }
+        }
+
+        .forgive-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #09071bd9;
+            backdrop-filter: blur(14px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .8s ease, visibility .8s ease;
+        }
+
+        .forgive-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .forgive-button {
+            font-family: inherit;
+            border: 1px solid rgba(190, 238, 255, 0.65);
+            border-radius: 100px;
+            padding: 13px 42px;
+            background: rgba(187, 235, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #c9f2ff;
+            font-size: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow:
+                0 0 22px rgba(146, 220, 255, 0.15),
+                inset 0 0 15px rgba(190, 235, 255, 0.06);
+            animation: pulse 2.7s ease-in-out infinite;
+            transition:
+                transform .3s ease,
+                background .3s ease,
+                box-shadow .3s ease;
+        }
+
+        .forgive-button:focus-visible {
+            outline: 3px solid white;
+            outline-offset: 5px;
+        }
+
+        .moon-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            background: rgba(7, 9, 28, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .5s ease, visibility .5s ease;
+        }
+
+        .moon-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .moon-photo {
+            width: 100%;
+            max-width: 390px;
+            max-height: 75svh;
+            object-fit: contain;
+            border-radius: 22px;
+            border: 1px solid rgba(190, 235, 255, 0.35);
+            box-shadow: 0 0 55px rgba(152, 215, 255, 0.25);
+            transform: scale(.9);
+            transition: transform .5s ease;
+        }
+
+        .moon-overlay.visible .moon-photo {
+            transform: scale(1);
+        }
+
+        .moon-close {
+            position: absolute;
+            top: max(25px, env(safe-area-inset-top));
+            right: 25px;
+            width: 39px;
+            height: 39px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(190, 235, 255, .35);
+            border-radius: 50%;
+            background: rgba(185, 235, 255, .12);
+            color: #d5f5ff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 390px) {
+            .para {
+                padding: 22px 19px;
+                margin-bottom: 35px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .para, .ending {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+
+            .glow, .heart, .down, .moon {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="glow" aria-hidden="true"></div>
+
+<main>
+    <section class="intro">
+        <div
+            class="moon"
+            id="moonButton"
+            role="button"
+            tabindex="0"
+            aria-label="نمایش عکس ماه"
+        ></div>
+
+        <div class="tiny">✦ Love U till the END ✦</div>
+        <div class="heart">🩵</div>
+
+        <h1>
+            برای بهترین<br>
+            دوست دنیای من
+        </h1>
+
+        <div class="subtitle">
+            یه نامه از ته قلبم، (خونه خودت)... ✨
+        </div>
+    </section>
+
+    <section class="story" id="story">
+
+        <article class="para special">
+            <strong>روزت مبارک عزیزدلمم🩵✨</strong>
+        </article>
+
+        <article class="para">
+            می‌دونی عزیز دلم، بعضی وقتا با خودم فکر می‌کنم چقدر خوش‌شانسم که دختری مثل تو توی زندگیم دارم؛ دختری که پشت اون قلب مهربون و لطیفش، یه دنیا قدرت و صبوری قایم شده. دختری که با وجود تموم سختی‌ها، خستگی‌ها و روزایی که شاید هیچ‌چیز اون‌طوری که دلش می‌خواد پیش نمی‌ره، بازم بلند می‌شه، ادامه می‌ده و برای رویاهاش می‌جنگه 💕
+        </article>
+
+        <article class="para">
+            وقتی فکر می‌کنم از صبح تا شب توی پانسیونی، ساعت‌ها درس می‌خونی، خسته می‌شی، گاهی شاید دلت بگیره، ولی بازم دست از تلاش کردن برنمی‌داری، دلم پر از یه حس قشنگ می‌شه؛
+            <strong>یه افتخار عمیق به فرشته نازم که با تمام وجودم دوستش دارم.</strong> 🩵
+        </article>
+
+        <article class="para">
+            کاش می‌تونستی فقط برای چند لحظه خودت رو از چشم من ببینی تا بفهمی چقدر برام ارزشمندی، چقدر بهت ایمان دارم و چقدر به داشتن تو توی زندگیم افتخار می‌کنم.
+        </article>
+
+        <article class="para">
+            عشق قشنگم، می‌خوام بدونی که من فقط عاشق خنده‌هات، صدات و اون قلب مهربونت نیستم؛ من عاشق اون دختر قوی‌ای هم هستم که حتی وقتی خسته‌ست، حتی وقتی روزگار بهش سخت می‌گیره، باز هم برای آینده‌ش تلاش می‌کنه.
+        </article>
+
+        <article class="para">
+            می‌دونی چی بیشتر از همه دلم رو می‌لرزونه؟ اینکه شاید خیلی وقتا کسی نباشه ببینه چقدر خسته‌ای، چقدر به خودت فشار میاری و چقدر برای رسیدن به آرزوهات از خواسته‌های کوچیکت می‌گذری. ولی من می‌بینم عزیز دلم، من به تمام تلاش‌هات توجه می‌کنم و دلم می‌خواد بدونی که چقدر برام باارزشی🩵
+        </article>
+
+        <article class="para">
+            فقط یه قول بهم بده؛ توی مسیر رسیدن به آرزوهات، خودت و اون لبخند قشنگت رو فراموش نکنی. چون برای من، تو خیلی بیشتر از هر موفقیت و نتیجه‌ای ارزش داری🤏🏻
+        </article>
+
+        <article class="para special">
+            <strong>من منتظر روزی نیستم که به آرزوهات برسی تا بهت افتخار کنم؛ من همین الان، وسط همین روزای سخت، وسط همین خستگی‌ها و تلاش‌هات، بی‌نهایت بهت افتخار می‌کنم</strong>✨💕
+        </article>
+
+        <article class="para">
+            و اگه یه روز از همه‌چی خسته شدی، اگه یه لحظه احساس کردی دیگه توان ادامه دادن نداری، دلم می‌خواد یادت بیاد که یه نفر اینجا هست که از ته قلبش بهت ایمان داره، بهت افتخار می‌کنه و بیشتر از چیزی که بتونه با کلمه‌ها توضیح بده، دوستت داره.
+        </article>
+
+        <article class="para special">
+            روزت مبارک، دختر قوی و نازنازی قلب من. 🩵
+        </article>
+
+        <article class="para special">
+            <strong>تو فقط عشق من نیستی، تو قشنگ‌ترین دلیل زندگی منی:)</strong>
+        </article>
+
+        <article class="para">
+            و اگه هزار بار دیگه هم حق انتخاب داشته باشم، باز هم دلم می‌خواد همون دختری رو انتخاب کنم که با تمام خستگی‌هاش، با تمام سختی‌هایی که پشت سر می‌ذاره، هنوز هم قشنگ‌ترین آدم دنیای منه.
+        </article>
+
+        <article class="para special">
+            <strong>خیلی دوستت دارم، دختر پرتلاش و قشنگ من. بیشتر از اون چیزی که فکرش رو بکنی🩵</strong>
+        </article>
+
+    </section>
+
+    <footer class="ending" id="ending">
+        <span class="big">🩵✨</span>
+        <h2>تو نانازبلای منییی</h2>
+        <p>برای تو، با تموم قلبم ✦</p>
+    </footer>
+</main>
+
+<div class="forgive-overlay" id="forgiveOverlay">
+    <button class="forgive-button" id="forgiveButton">
+        بخشیدمت
+    </button>
+</div>
+
+<div
+    class="moon-overlay"
+    id="moonOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="عکس ماه"
+    aria-hidden="true"
+>
+    <button class="moon-close" id="moonClose" aria-label="بستن عکس">×</button>
+    <img class="moon-photo" src="./831cc41d-63aa-4d8d-b37c-19be2e54a13d.png" alt="یه عکس مخصوص تو 🩵">
+</div>
+
+<audio id="surpriseAudio" src="./New Project.mp3" preload="auto" loop></audio>
+
+<script>
+    (() => {
+        'use strict';
+
+        const canvas = document.getElementById('sky');
+        const ctx = canvas.getContext('2d');
+
+        let w, h, stars = [], tick = 0;
+        let motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function resize() {
+            w = canvas.width = innerWidth * devicePixelRatio;
+            h = canvas.height = innerHeight * devicePixelRatio;
+
+            stars = Array.from({
+                length: Math.min(230, Math.floor(innerWidth * innerHeight / 1800))
+            }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: (Math.random() * 1.25 + .18) * devicePixelRatio,
+                a: Math.random() * 6.28,
+                s: Math.random() * .023 + .005,
+                c: Math.random() > .8 ? '255,196,237' : '195,231,255'
+            }));
+        }
+
+        addEventListener('resize', resize);
+        resize();
+
+        function draw() {
+            ctx.clearRect(0, 0, w, h);
+            tick++;
+
+            for (let s of stars) {
+                const alpha = .24 + .67 * (.5 + .5 * Math.sin(tick * s.s + s.a));
+
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(${s.c},${alpha})`;
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (s.r > devicePixelRatio && alpha > .65) {
+                    ctx.strokeStyle = `rgba(${s.c},${alpha * .28})`;
+                    ctx.lineWidth = devicePixelRatio * .6;
+
+                    ctx.beginPath();
+                    ctx.moveTo(s.x - 5 * devicePixelRatio, s.y);
+                    ctx.lineTo(s.x + 5 * devicePixelRatio, s.y);
+                    ctx.moveTo(s.x, s.y - 5 * devicePixelRatio);
+                    ctx.lineTo(s.x, s.y + 5 * devicePixelRatio);
+                    ctx.stroke();
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        const paras = [...document.querySelectorAll('.para')];
+        const end = document.getElementById('ending');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('show');
+                }
+            });
+        }, { threshold: .12 });
+
+        paras.forEach(p => observer.observe(p));
+        observer.observe(end);
+
+        function sprinkle() {
+            if (!motion || document.hidden) return;
+
+            let p = document.createElement('div');
+            p.className = 'petal';
+            p.textContent = Math.random() > .55 ? '✦' : '✧';
+
+            p.style.cssText = `
+                left:${Math.random() * 100}vw;
+                top:-25px;
+                color:${Math.random() > .5 ? '#a9eaff' : '#f7c8ff'};
+                font-size:${10 + Math.random() * 13}px;
+                animation-duration:${8 + Math.random() * 10}s
+            `;
+
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 19000);
+        }
+
+        setInterval(sprinkle, 1300);
+
+        const forgiveOverlay = document.getElementById('forgiveOverlay');
+        const forgiveButton = document.getElementById('forgiveButton');
+        const surpriseAudio = document.getElementById('surpriseAudio');
+
+        let bottomTimer = null;
+        let surpriseStarted = false;
+        let forgiven = false;
+
+        surpriseAudio.loop = true;
+
+        function startSurprise() {
+            if (surpriseStarted || forgiven) return;
+
+            surpriseStarted = true;
+            forgiveOverlay.classList.add('visible');
+
+            surpriseAudio.currentTime = 0;
+            surpriseAudio.play().catch(() => {
+                const retryPlayback = () => {
+                    if (!forgiven) {
+                        surpriseAudio.play().catch(() => {});
+                    }
+                };
+
+                forgiveButton.addEventListener('pointerdown', retryPlayback, { once: true });
+            });
+        }
+
+        function checkBottom() {
+            if (surpriseStarted || forgiven) return;
+
+            const atBottom =
+                window.scrollY + window.innerHeight >=
+                document.documentElement.scrollHeight - 12;
+
+            if (atBottom && bottomTimer === null) {
+                bottomTimer = setTimeout(() => {
+                    bottomTimer = null;
+
+                    const stillAtBottom =
+                        window.scrollY + window.innerHeight >=
+                        document.documentElement.scrollHeight - 12;
+
+                    if (stillAtBottom) {
+                        startSurprise();
+                    }
+                }, 3000);
+            } else if (!atBottom && bottomTimer !== null) {
+                clearTimeout(bottomTimer);
+                bottomTimer = null;
+            }
+        }
+
+        addEventListener('scroll', checkBottom, { passive: true });
+        addEventListener('resize', checkBottom);
+
+        forgiveButton.addEventListener('click', () => {
+            forgiven = true;
+
+            surpriseAudio.pause();
+            surpriseAudio.currentTime = 0;
+
+            forgiveOverlay.classList.remove('visible');
+        });
+
+        const moonButton = document.getElementById('moonButton');
+        const moonOverlay = document.getElementById('moonOverlay');
+        const moonClose = document.getElementById('moonClose');
+
+        function openMoonPhoto() {
+            moonOverlay.classList.add('visible');
+            moonOverlay.setAttribute('aria-hidden', 'false');
+            moonClose.focus();
+        }
+
+        function closeMoonPhoto() {
+            moonOverlay.classList.remove('visible');
+            moonOverlay.setAttribute('aria-hidden', 'true');
+            moonButton.focus();
+        }
+
+        moonButton.addEventListener('click', openMoonPhoto);
+
+        moonButton.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openMoonPhoto();
+            }
+        });
+
+        moonClose.addEventListener('click', closeMoonPhoto);
+
+        moonOverlay.addEventListener('click', e => {
+            if (e.target === moonOverlay) {
+                closeMoonPhoto();
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && moonOverlay.classList.contains('visible')) {
+                closeMoonPhoto();
+            }
+        });
+
+        checkBottom();
+    })();
+</script>
+
+</body>
+</html>
