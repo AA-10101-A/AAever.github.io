@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A♾️A</title>
+  <link rel="icon" type="image/png" href="./a-retro-styled-pixel-art-illustration-of-a-mini-blue-heart-icon-free-png-removebg-preview.png" sizes="16x16">
+
+  <style>
+    @font-face {
+      font-family: a;
+      src: url(./Mj_Ghalam-1.TTF);
+    }
+
+    :root {
+      --bg: #030712;
+      --card: rgba(15, 30, 52, 0.62);
+      --text: #e6eef8;
+      --muted: #a6b9d1;
+      --accent: #7dd3fc;
+      --gold: #f7d77a;
+      --pink: #f9a8d4;
+      --blue: #93c5fd;
+      --cyan: #67e8f9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: a, ui-sans-serif, system-ui;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.18), transparent 35%),
+        radial-gradient(circle at 15% 80%, rgba(236, 72, 153, 0.12), transparent 28%),
+        radial-gradient(circle at 85% 75%, rgba(34, 211, 238, 0.12), transparent 28%),
+        linear-gradient(180deg, #020617 0%, #081123 45%, #030712 100%);
+    }
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(70px);
+      opacity: 0.28;
+      pointer-events: none;
+      z-index: 0;
+      animation: floatOrb 10s ease-in-out infinite;
+    }
+
+    .orb1 {
+      width: 260px;
+      height: 260px;
+      background: rgba(56, 189, 248, 0.26);
+      top: 8%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .orb2 {
+      width: 220px;
+      height: 220px;
+      background: rgba(244, 114, 182, 0.18);
+      bottom: 8%;
+      right: 10%;
+      animation-delay: 1.8s;
+    }
+
+    .orb3 {
+      width: 180px;
+      height: 180px;
+      background: rgba(250, 204, 21, 0.16);
+      top: 55%;
+      left: 70%;
+      animation-delay: 3.2s;
+    }
+
+    .floating-emojis {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-emoji {
+      position: absolute;
+      bottom: -60px;
+      opacity: 0;
+      animation-name: floatUp;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.18));
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .wrap {
+      width: min(92%, 850px);
+      padding: 48px 30px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      background: rgba(8, 17, 35, 0.44);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 203, 255, 0.14);
+      border-radius: 30px;
+      box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.34),
+        0 0 40px rgba(56, 189, 248, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      animation: fadeIn 0.9s ease both;
+      overflow: hidden;
+    }
+
+    .wrap::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 18%;
+      width: 64%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.78), transparent);
+    }
+
+    .wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.06), transparent 20%),
+        radial-gradient(circle at bottom left, rgba(255,255,255,0.04), transparent 24%);
+      pointer-events: none;
+    }
+
+    h1 {
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: normal;
+      color: #c7eeff;
+      margin-bottom: 35px;
+      line-height: 1.8;
+      text-shadow:
+        0 0 14px rgba(56, 189, 248, 0.25),
+        0 0 34px rgba(56, 189, 248, 0.12);
+    }
+
+    .counter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 35px;
+    }
+
+    .counter {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-width: 0;
+      padding: 25px 12px;
+      background: linear-gradient(145deg, rgba(26, 47, 75, 0.78), rgba(10, 21, 40, 0.76));
+      border: 1px solid rgba(148, 203, 255, 0.14);
+      border-radius: 20px;
+      box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .counter::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, rgba(125, 211, 252, 0.08), transparent 60%);
+      pointer-events: none;
+    }
+
+    .counter:hover {
+      transform: translateY(-5px) scale(1.01);
+      border-color: rgba(125, 211, 252, 0.32);
+      box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25),
+        0 0 28px rgba(56, 189, 248, 0.09);
+    }
+
+    .num {
+      font-family: a, ui-sans-serif, system-ui;
+      font-size: clamp(32px, 4.5vw, 43px);
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 7px;
+      color: var(--gold);
+      text-shadow:
+        0 0 14px rgba(250, 204, 21, 0.24),
+        0 0 28px rgba(250, 204, 21, 0.12);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .label {
+      font-size: 20px;
+      color: #a9bfd8;
+      letter-spacing: 0.2px;
+    }
+
+    #totalSeconds {
+      display: block;
+      font-size: clamp(17px, 2.5vw, 22px);
+      line-height: 2;
+      color: var(--gold);
+      margin-top: 10px;
+      padding: 0 8px;
+      text-shadow: 0 0 18px rgba(250, 204, 21, 0.08);
+    }
+
+    #formula {
+      direction: ltr;
+      font-size: clamp(17px, 2.5vw, 22px);
+      color: #9bb7d7;
+      margin-top: 18px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    #multiplied {
+      display: block;
+      font-size: clamp(19px, 3vw, 25px);
+      color: #8fe4ff;
+      margin-top: 10px;
+      line-height: 1.8;
+      padding: 0 8px;
+      overflow-wrap: anywhere;
+      text-shadow:
+        0 0 16px rgba(56, 189, 248, 0.18),
+        0 0 30px rgba(56, 189, 248, 0.1);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) translateX(0) scale(0.9) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.95;
+      }
+      50% {
+        transform: translateY(-45vh) translateX(20px) scale(1.05) rotate(8deg);
+        opacity: 0.95;
+      }
+      100% {
+        transform: translateY(-110vh) translateX(-18px) scale(1.1) rotate(-8deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes floatOrb {
+      0%, 100% {
+        transform: translateY(0) translateX(0) scale(1);
+      }
+      50% {
+        transform: translateY(-18px) translateX(12px) scale(1.05);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        width: 94%;
+        padding: 32px 18px;
+        margin: 20px auto;
+      }
+
+      .counter-grid {
+        gap: 12px;
+      }
+
+      .counter {
+        padding: 20px 10px;
+        border-radius: 17px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 0;
+      }
+
+      .wrap {
+        width: 94%;
+        padding: 28px 14px;
+        border-radius: 24px;
+      }
+
+      h1 {
+        font-size: 23px;
+        margin-bottom: 25px;
+      }
+
+      .counter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+        margin-bottom: 26px;
+      }
+
+      .counter {
+        padding: 18px 8px;
+        border-radius: 16px;
+      }
+
+      .num {
+        font-size: 34px;
+      }
+
+      .label {
+        font-size: 18px;
+      }
+
+      #totalSeconds {
+        font-size: 17px;
+      }
+
+      #formula {
+        font-size: 18px;
+      }
+
+      #multiplied {
+        font-size: 19px;
+      }
+
+      .floating-emoji {
+        font-size: 22px !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .wrap {
+        animation: none;
+      }
+
+      .counter {
+        transition: none;
+      }
+
+      .floating-emoji,
+      .bg-orb {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars"></canvas>
+
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+
+  <div class="floating-emojis" id="floatingEmojis"></div>
+
+  <div class="wrap">
+    <h1>روز شمار ورود فرشته کوچولوی خوشگلم به زمین</h1>
+
+    <div class="counter-grid">
+      <div class="counter">
+        <div id="years" class="num">0</div>
+        <div class="label">سال</div>
+      </div>
+
+      <div class="counter">
+        <div id="months" class="num">0</div>
+        <div class="label">ماه</div>
+      </div>
+
+      <div class="counter">
+        <div id="days" class="num">0</div>
+        <div class="label">روز</div>
+      </div>
+
+      <div class="counter">
+        <div id="hours" class="num">0</div>
+        <div class="label">ساعت</div>
+      </div>
+
+      <div class="counter">
+        <div id="minutes" class="num">0</div>
+        <div class="label">دقیقه</div>
+      </div>
+
+      <div class="counter">
+        <div id="seconds" class="num">0</div>
+        <div class="label">ثانیه</div>
+      </div>
+    </div>
+
+    <div id="totalSeconds">0 ثانیه از فرودت از مبدا بهشت به مقصد زمین گذشته</div>
+    <div id="formula">0 × ۹۹۹۹۹۹۹۹۹ =</div>
+    <div id="multiplied">0 :)تا دوست دارم</div>
+  </div>
+
+  <script>
+    const origin = new Date('2008-11-01T00:00:00');
+
+    const yearsEl = document.getElementById('years');
+    const monthsEl = document.getElementById('months');
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    const totalSecondsEl = document.getElementById('totalSeconds');
+    const formulaEl = document.getElementById('formula');
+    const multipliedEl = document.getElementById('multiplied');
+
+    function diffDateParts(from, to) {
+      let y1 = from.getFullYear(), m1 = from.getMonth(), d1 = from.getDate();
+      let y2 = to.getFullYear(), m2 = to.getMonth(), d2 = to.getDate();
+      let hh1 = from.getHours(), min1 = from.getMinutes(), s1 = from.getSeconds();
+      let hh2 = to.getHours(), min2 = to.getMinutes(), s2 = to.getSeconds();
+
+      let year = y2 - y1;
+      let month = m2 - m1;
+      let day = d2 - d1;
+      let hour = hh2 - hh1;
+      let minute = min2 - min1;
+      let second = s2 - s1;
+
+      if (second < 0) {
+        second += 60;
+        minute--;
+      }
+
+      if (minute < 0) {
+        minute += 60;
+        hour--;
+      }
+
+      if (hour < 0) {
+        hour += 24;
+        day--;
+      }
+
+      if (day < 0) {
+        const prevMonth = new Date(y2, m2, 0);
+        day += prevMonth.getDate();
+        month--;
+      }
+
+      if (month < 0) {
+        month += 12;
+        year--;
+      }
+
+      return { year, month, day, hour, minute, second };
+    }
+
+    function updateCounters() {
+      const now = new Date();
+      const diff = diffDateParts(origin, now);
+
+      yearsEl.textContent = diff.year;
+      monthsEl.textContent = diff.month;
+      daysEl.textContent = diff.day;
+      hoursEl.textContent = diff.hour;
+      minutesEl.textContent = diff.minute;
+      secondsEl.textContent = diff.second;
+
+      const totalSeconds = Math.floor((now - origin) / 1000);
+
+      totalSecondsEl.textContent =
+        totalSeconds.toLocaleString('fa-IR') + ' ثانیه از فرودت از مبدا بهشت به مقصد زمین گذشته';
+
+      const multiplied = totalSeconds * 999999999;
+
+      formulaEl.textContent =
+        totalSeconds.toLocaleString('fa-IR') + ' × ۹۹۹۹۹۹۹۹۹ =';
+
+      multipliedEl.textContent =
+        multiplied.toLocaleString('fa-IR') + ' تا دوست دارمم' + ':))';
+    }
+
+    updateCounters();
+    setInterval(updateCounters, 1000);
+
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+
+    let stars = [];
+    let sparkles = [];
+    let shootingStars = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      createStars();
+      createSparkles();
+    }
+
+    window.addEventListener('resize', resize);
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createStars() {
+      const count = Math.min(480, Math.floor((window.innerWidth * window.innerHeight) / 3200));
+      stars = [];
+
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: rand(0.5, 2.2),
+          baseA: rand(0.2, 0.95),
+          a: rand(0.2, 0.95),
+          twinkle: rand(0.008, 0.03),
+          pulse: rand(0, Math.PI * 2),
+          colorType: Math.random()
+        });
+      }
+    }
+
+    function createSparkles() {
+      const count = Math.min(55, Math.floor((window.innerWidth * window.innerHeight) / 26000));
+      sparkles = [];
+
+      for (let i = 0; i < count; i++) {
+        sparkles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: rand(4, 10),
+          rot: rand(0, Math.PI * 2),
+          speed: rand(0.004, 0.02),
+          a: rand(0.2, 0.7)
+        });
+      }
+    }
+
+    function spawnShootingStar() {
+      shootingStars.push({
+        x: rand(canvas.width * 0.2, canvas.width * 0.9),
+        y: rand(0, canvas.height * 0.35),
+        len: rand(120, 220),
+        speed: rand(9, 14),
+        life: 0,
+        maxLife: rand(24, 34),
+        angle: rand(Math.PI * 1.95, Math.PI * 2.15)
+      });
+    }
+
+    function drawGlowStar(x, y, r, alpha, type) {
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 6);
+      let core = '255,255,255';
+      let glow = '255,255,255';
+
+      if (type < 0.18) {
+        core = '255,226,153';
+        glow = '250,204,21';
+      } else if (type < 0.36) {
+        core = '191,219,254';
+        glow = '96,165,250';
+      } else if (type < 0.48) {
+        core = '224,231,255';
+        glow = '103,232,249';
+      }
+
+      grd.addColorStop(0, `rgba(${core},${alpha})`);
+      grd.addColorStop(0.22, `rgba(${glow},${alpha * 0.55})`);
+      grd.addColorStop(1, `rgba(${glow},0)`);
+
+      ctx.beginPath();
+      ctx.fillStyle = grd;
+      ctx.arc(x, y, r * 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${core},${Math.min(1, alpha + 0.1)})`;
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawSparkle(s) {
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.rotate(s.rot);
+      ctx.globalAlpha = s.a;
+      ctx.strokeStyle = 'rgba(255,255,255,0.72)';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(-s.size, 0);
+      ctx.lineTo(s.size, 0);
+      ctx.moveTo(0, -s.size);
+      ctx.lineTo(0, s.size);
+      ctx.stroke();
+      ctx.restore();
+
+      s.rot += s.speed;
+    }
+
+    function drawShootingStar(star) {
+      const endX = star.x - Math.cos(star.angle) * star.len;
+      const endY = star.y - Math.sin(star.angle) * star.len;
+
+      const grad = ctx.createLinearGradient(star.x, star.y, endX, endY);
+      grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+      grad.addColorStop(0.25, 'rgba(147,197,253,0.75)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+
+      ctx.beginPath();
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.2;
+      ctx.moveTo(star.x, star.y);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.arc(star.x, star.y, 1.9, 0, Math.PI * 2);
+      ctx.fill();
+
+      star.x += Math.cos(star.angle) * star.speed;
+      star.y += Math.sin(star.angle) * star.speed;
+      star.life++;
+    }
+
+    function animateSky() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        s.pulse += s.twinkle;
+        s.a = s.baseA + Math.sin(s.pulse) * 0.24;
+        if (s.a < 0.08) s.a = 0.08;
+        drawGlowStar(s.x, s.y, s.r, s.a, s.colorType);
+      }
+
+      for (let i = 0; i < sparkles.length; i++) {
+        drawSparkle(sparkles[i]);
+      }
+
+      if (Math.random() < 0.008 && shootingStars.length < 2) {
+        spawnShootingStar();
+      }
+
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        drawShootingStar(shootingStars[i]);
+        if (shootingStars[i].life > shootingStars[i].maxLife) {
+          shootingStars.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animateSky);
+    }
+
+    resize();
+    animateSky();
+
+    const floatingEmojis = document.getElementById('floatingEmojis');
+    const emojis = ['🎂', '✨', '🎈', '🎁', '🩵', '🎉', '⭐', '💙'];
+
+    function createFloatingEmoji() {
+      const span = document.createElement('span');
+      span.className = 'floating-emoji';
+      span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      span.style.left = Math.random() * 100 + 'vw';
+      span.style.fontSize = rand(20, 34) + 'px';
+      span.style.animationDuration = rand(8, 16) + 's';
+      span.style.animationDelay = rand(-14, 0) + 's';
+      span.style.opacity = rand(0.55, 1).toFixed(2);
+      floatingEmojis.appendChild(span);
+    }
+
+    for (let i = 0; i < 18; i++) {
+      createFloatingEmoji();
+    }
+  </script>
+</body>
+</html>
